@@ -1,0 +1,18 @@
+body {
+	text-align: center;
+	background-image: url(img/spaceshooter/Backgrounds/blue.png);
+}
+
+canvas {
+	background-image: url(http://www.kodymccarthy.com/wp-content/uploads/2014/08/space_sample.png);
+	margin-top: 5%;
+	background-position: 0px 0px;
+	background-repeat: repeat;
+	animation: animate 5s linear;
+	animation-iteration-count: infinite;
+}
+
+@keyframes animate {
+	from{background-position: 0 0;}
+	to{background-position: 0 750px;}
+}
