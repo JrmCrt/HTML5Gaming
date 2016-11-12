@@ -1,9 +1,21 @@
 function init() {
 	var stage = new createjs.Stage("canvas");
 	
+	var keys = {
+		direction: {
+			left: 37,
+			right: 39,
+			up: 38,
+			down: 40 
+		},
+		fire: [32, 18, 17],
+		escape: 27,
+		enter: 13
+	};
+
 	const img = {
 		ship: 'spaceshooter/PNG/playerShip1_orange.png',    
-		fire: {1: 'spaceshooter/PNG/Lasers/laserBlue07.png', 2: 'spaceshooter/PNG/Lasers/laserBlue06.png', 3: 'spaceshooter/PNG/Lasers/laserBlue16.png', 4: 'spaceshooter/PNG/Lasers/laserBlue16.png', 
+		fire: {1: 'spaceExtension/PNG/Sprites/Missiles/spaceMissiles_001.png', 2: 'spaceshooter/PNG/Lasers/laserBlue06.png', 3: 'spaceshooter/PNG/Lasers/laserBlue16.png', 4: 'spaceshooter/PNG/Lasers/laserBlue16.png', 
 		enemie: 'spaceshooter/PNG/Lasers/laserRed07.png', hit: {blue: 'spaceshooter/PNG/Lasers/laserBlue10.png', red: 'spaceshooter/PNG/Lasers/laserBlue10.png'}},
 		rocks: {small: 'spaceshooter/PNG/Meteors/meteorBrown_med1.png', big: 'spaceshooter/PNG/Meteors/meteorBrown_big3.png'},
 		enemies: {0: 'spaceshooter/PNG/Enemies/enemyBlue1.png', 1: 'spaceshooter/PNG/Enemies/enemyBlue2.png', 2: 'spaceshooter/PNG/Enemies/enemyBlue3.png', 3: 'spaceshooter/PNG/Enemies/enemyBlue4.png', 4: 'spaceshooter/PNG/Enemies/enemyBlue5.png'},
@@ -15,7 +27,7 @@ function init() {
 	};
 	
 	document.onkeydown = handleKeyDown;
-    document.onkeyup = handleKeyUp;
+	document.onkeyup = handleKeyUp;
 	createjs.Ticker.addEventListener("tick", handleTick);
 	createjs.Ticker.setFPS(60);
 
@@ -23,7 +35,9 @@ function init() {
 		bitmap: false,
 		speed: 7, 
 		image: img.ship,
-		lives: 3, 
+		lives: 3,
+		canFire: true,
+		firing: false, 
 		direction: {left: false, right: false, up: false, down: false},
 
 		append: function(){
@@ -36,6 +50,17 @@ function init() {
 
 		shoot: function(){
 			//will shooot
+			if(this.canFire)
+			{	
+				console.log('pew pew!');
+				var fire = new createjs.Bitmap('img/' + img.fire[1]);
+				stage.addChild(fire);
+				fire.y = this.bitmap.y - 35;
+				fire.x = this.bitmap.x + this.bitmap.image.width / 2 - (fire.image.width / 2);
+				this.canFire = false;
+				setTimeout(function(){ship.canFire = true}, 250);   
+			}
+
 		},
 
 		move: function(dir){
@@ -52,50 +77,41 @@ function init() {
 
 	};
 
-	var keys = {
-		left: 37,
-		right: 39,
-		up: 38,
-		down: 40,
-		fire: 32,
-		escape: 27,
-		enter: 13
-	};
 
 	ship.append();
 
 	function handleTick(event) {
-		console.log(ship.direction);
-		for(var v in ship.direction){
+		for(var v in ship.direction)
 			if(ship.direction[v])
 				ship.move(v);
+
+			if(ship.firing)
+				ship.shoot();
+
+			stage.update()
 		}
-		stage.update()
-	}
 
-	function handleKeyDown(e) {
-		e.preventDefault();
-    	var key = e.keyCode;
-    	if(key == keys.left)
-    		ship.direction.left = true;
-    	if(key == keys.right)
-    		ship.direction.right = true;
-    	if(key == keys.up)
-    		ship.direction.up = true;
-    	if(key == keys.down)
-    		ship.direction.down = true;
-    }
+		function handleKeyDown(e) {
+		//e.preventDefault();
+		//alert(e.keyCode);
+		var key = e.keyCode;
+		for(var v of Object.keys(keys.direction))
+			if(key == keys.direction[v])
+				ship.direction[v] = true;
 
-    function handleKeyUp(e) {
-    	var key = e.keyCode;
-    	if(key == keys.left)
-    		ship.direction.left = false;
-    	if(key == keys.right)
-    		ship.direction.right = false;
-    	if(key == keys.up)
-    		ship.direction.up = false;
-    	if(key == keys.down)
-    		ship.direction.down = false;
-    }
+			if(keys.fire.includes(key))
+				ship.firing = true;
 
-}
+		}
+
+		function handleKeyUp(e) {
+			var key = e.keyCode;
+			for(var v of Object.keys(keys.direction))
+				if(key == keys.direction[v])
+					ship.direction[v] = false;
+
+				if(keys.fire.includes(key))
+					ship.firing = false;	
+			}
+
+		}
