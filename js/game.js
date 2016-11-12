@@ -33,7 +33,7 @@ function init() {
 
 	var ship = {
 		bitmap: false,
-		speed: 7, 
+		speed: 6, 
 		image: img.ship,
 		lives: 3,
 		canFire: true,
@@ -49,14 +49,14 @@ function init() {
 		}, 
 
 		shoot: function(){
-			//will shooot
 			if(this.canFire)
 			{	
-				console.log('pew pew!');
 				var fire = new createjs.Bitmap('img/' + img.fire[1]);
 				stage.addChild(fire);
 				fire.y = this.bitmap.y - 35;
 				fire.x = this.bitmap.x + this.bitmap.image.width / 2 - (fire.image.width / 2);
+				createjs.Tween.get(fire)
+                .to({y: this.bitmap.y - stage.canvas.height}, 1250, createjs.Ease.getPowInOut(1));
 				this.canFire = false;
 				setTimeout(function(){ship.canFire = true}, 250);   
 			}
@@ -72,11 +72,9 @@ function init() {
 				this.bitmap.y -= this.speed;
 			if(dir == 'down' && this.bitmap.y < (stage.canvas.height - this.bitmap.image.height) - 5)
 				this.bitmap.y += this.speed;
-			stage.update();
 		}
 
 	};
-
 
 	ship.append();
 
