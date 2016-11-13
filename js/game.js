@@ -1,6 +1,5 @@
 function init() {
 	var stage = new createjs.Stage("canvas");
-	
 	document.onkeydown = handleKeyDown;
 	document.onkeyup = handleKeyUp;
 	createjs.Ticker.addEventListener("tick", handleTick);
@@ -12,6 +11,11 @@ function init() {
 		state: {
 			pause: false,
 			over: false,
+		},
+
+		start: function(){
+			ship.append();
+			sounds.register();
 		}
 
 	};
@@ -44,7 +48,7 @@ function init() {
 				createjs.Tween.get(fire)
                 .to({y: this.bitmap.y - stage.canvas.height}, 1250, createjs.Ease.getPowInOut(1));
 				var sound = createjs.Sound.play('fire');
-				sound.volume = 0.05;
+				sound.volume = 0.5;
 				this.canFire = false;
 				setTimeout(function(){ship.canFire = true}, 250);   
 			}
@@ -64,8 +68,7 @@ function init() {
 
 	};
 
-	ship.append();
-	sounds.register();
+	game.start();
 
 	function handleTick(event) {
 		for(var v in ship.direction)

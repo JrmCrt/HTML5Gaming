@@ -5,7 +5,7 @@ const keys = {
 		up: 38,
 		down: 40 
 	},
-	fire: [32, 18, 17],
+	fire: [32, 17],
 	escape: 27,
 	enter: 13
 };
@@ -63,3 +63,7 @@ const img = {
 	life: 'spaceshooter/PNG/UI/playerLife1_orange.png',
 	shield: 'spaceshooter/PNG/Effects/shield3.png'
 };
+
+function rand(min, max){
+	return Math.floor(Math.random() * max) + min;
+}
