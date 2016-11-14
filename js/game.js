@@ -31,14 +31,34 @@ function init() {
 		},
 
 		handleCollisions: function(){
-			for(var i = 0, shotsNb = this.shots.length; i < shotsNb; i++){
-				for(var j = 0, enemiesNb = this.enemies.length; j < enemiesNb; j++){
-					if(ndgmr.checkPixelCollision(this.shots[i], this.enemies[j].bitmap, 0))
+			//console.table(this.enemies);
+			for(var i = 0; i < this.shots.length; i++){
+				for(var j = 0; j < this.enemies.length; j++){
+					var colision = ndgmr.checkPixelCollision(this.shots[i], this.enemies[j].bitmap, 0);
+					if(colision)
 					{
+						var impact = new createjs.Bitmap('img/' + imgs.fire.hit.blue);
+						stage.addChild(impact);
+						impact.x = colision.x - (impact.image.width / 2);
+						impact.y = colision.y - (impact.image.height / 2);
+			            setTimeout(function(){stage.removeChild(impact);}, 50);
+
 						stage.removeChild(this.shots[i]);
 						this.shots.splice(i, 1);
-						stage.removeChild(this.enemies[j].bitmap);
-						this.enemies.splice(j, 1);
+						this.enemies[j].lives -= ship.firePower;
+
+						if(this.enemies[j].lives <= 0)
+						{
+							stage.removeChild(this.enemies[j].bitmap);
+							this.enemies.splice(j, 1);
+						}
+						else if(this.enemies[j].damagesImg)
+						{
+							if(this.enemies[j].damagesImg[this.enemies[j].lives] !== undefined)
+							{
+								this.enemies[j].bitmap.image.src = 'img/' + this.enemies[j].damagesImg[this.enemies[j].lives];
+							}
+						}
 					}
 				}	
 			}
@@ -97,7 +117,7 @@ function init() {
 	game.start();
 
 	for (var i = 0; i < 5; i++) {
-		var temp = new Enemy(imgs.enemies.alien, 5, 3, imgs.fire.enemy, []);
+		var temp = new Enemy(imgs.enemies.alien.regular, 5, 3, imgs.fire.enemy, imgs.enemies.alien.damages);
 		game.addEnemy(temp);
 	}
 

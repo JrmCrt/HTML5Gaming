@@ -46,7 +46,13 @@ const imgs = {
 		2: 'spaceshooter/PNG/Enemies/enemyBlue3.png', 
 		3: 'spaceshooter/PNG/Enemies/enemyBlue4.png', 
 		4: 'spaceshooter/PNG/Enemies/enemyBlue5.png',
-		alien: 'alien-pack/PNG/shipBlue.png'
+		alien: {
+			regular: 'alien-pack/PNG/shipBlue.png',
+			damages: {
+				1: 'alien-pack/PNG/shipBlue_damage2.png',
+				2: 'alien-pack/PNG/shipBlue_damage1.png'
+			}
+		}	
 	},
 	bosses: {
 		0: 'spaceshooter/PNG/Enemies/enemyBlack5.png', 
