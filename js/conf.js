@@ -23,14 +23,14 @@ const sounds = {
 	}
 };
 
-const img = {
+const imgs = {
 	ship: 'spaceshooter/PNG/playerShip1_orange.png',    
 	fire: {
 		1: 'spaceshooter/PNG/Lasers/laserBlue07.png', 
 		2: 'spaceshooter/PNG/Lasers/laserBlue06.png', 
 		3: 'spaceshooter/PNG/Lasers/laserBlue16.png', 
 		4: 'spaceshooter/PNG/Lasers/laserBlue16.png', 
-		enemie: 'spaceshooter/PNG/Lasers/laserRed07.png', 
+		enemy: 'spaceshooter/PNG/Lasers/laserRed07.png', 
 		hit: {
 			blue: 'spaceshooter/PNG/Lasers/laserBlue10.png', 
 			red: 'spaceshooter/PNG/Lasers/laserBlue10.png'
@@ -45,7 +45,8 @@ const img = {
 		1: 'spaceshooter/PNG/Enemies/enemyBlue2.png', 
 		2: 'spaceshooter/PNG/Enemies/enemyBlue3.png', 
 		3: 'spaceshooter/PNG/Enemies/enemyBlue4.png', 
-		4: 'spaceshooter/PNG/Enemies/enemyBlue5.png'
+		4: 'spaceshooter/PNG/Enemies/enemyBlue5.png',
+		alien: 'alien-pack/PNG/shipBlue.png'
 	},
 	bosses: {
 		0: 'spaceshooter/PNG/Enemies/enemyBlack5.png', 
