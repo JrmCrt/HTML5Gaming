@@ -1,10 +1,6 @@
 function init() {
-	
+
 	var stage = new createjs.Stage("canvas");
-	document.onkeydown = handleKeyDown;
-	document.onkeyup = handleKeyUp;
-	createjs.Ticker.addEventListener("tick", handleTick);
-	createjs.Ticker.setFPS(60);
 
 	var game = {
 		shots: [],
@@ -15,6 +11,10 @@ function init() {
 		},
 
 		start: function(){
+			document.onkeydown = handleKeyDown;
+			document.onkeyup = handleKeyUp;
+			createjs.Ticker.addEventListener("tick", handleTick);
+			createjs.Ticker.setFPS(60);
 			ship.append();
 			sounds.register();
 		},
@@ -60,12 +60,18 @@ function init() {
 				if(this.enemies[j].bitmap !== undefined)//if enemy still exists, check for colision
 				{
 					var colisionShip = ndgmr.checkPixelCollision(ship.bitmap, this.enemies[j].bitmap, 0);
-					if(colisionShip)
+					if(colisionShip && !ship.invicible)
 					{
 						this.createImpact(colisionShip);
 						stage.removeChild(this.enemies[j].bitmap);
 						this.enemies.splice(j, 1);
 						ship.lives--;
+						ship.invicible = true;
+						ship.bitmap.alpha = 0.5;
+						setTimeout(function(){
+							ship.invicible = false;
+							ship.bitmap.alpha = 1;
+						}, 750);
 					}
 					if(ship.lives === 0)
 					{	
@@ -91,6 +97,7 @@ function init() {
 		speed: 6, 
 		image: imgs.ship,
 		lives: 3,
+		invicible : false,
 		canFire: true,
 		firing: false,
 		firePower: 1, 
