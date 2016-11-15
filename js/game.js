@@ -9,6 +9,7 @@ function init() {
 			points : 0, 
 			bitmap: false
 		},
+		livesBitmap: [],
 		state: {
 			pause: false,
 			over: false,
@@ -22,6 +23,7 @@ function init() {
 			ship.append();
 			sounds.register();
 			this.addScore();
+			this.handleLives();
 		},
 
 		addEnemy: function(enemy){
@@ -50,9 +52,8 @@ function init() {
 						this.enemies[j].lives -= ship.firePower;
 
 						if(this.enemies[j].lives <= 0)
-						{
 							this.killShip(this.enemies[j], j);
-						}
+
 						else if(this.enemies[j].damagesImg)
 							if(this.enemies[j].damagesImg[this.enemies[j].lives] !== undefined)
 								this.enemies[j].bitmap.image.src = 'img/' + this.enemies[j].damagesImg[this.enemies[j].lives];
@@ -70,6 +71,7 @@ function init() {
 						var sound = createjs.Sound.play('lose');
 						sound.volume = 1;
 						ship.lives--;
+						this.handleLives();
 						this.killShip(this.enemies[j], j);
 						ship.invicible = true;
 						ship.bitmap.alpha = 0.5;
@@ -93,6 +95,28 @@ function init() {
 			impact.x = colision.x - (impact.image.width / 2);
 			impact.y = colision.y - (impact.image.height / 2);
 			setTimeout(function(){stage.removeChild(impact);}, 50);
+		},
+
+		handleLives: function(){
+			if(!this.livesBitmap.length)
+			{
+				for(var i = 0; i < ship.lives; i++){
+					var temp = new createjs.Bitmap('img/' + imgs.life);
+					temp.x = 20;
+				    temp.y = stage.canvas.height - 45 - (i * 40);
+				    this.livesBitmap.push(temp);
+				    stage.addChild(temp);
+				}
+			}
+
+			for(var i = 0; i < this.livesBitmap.length; i++)
+			{
+				if(ship.lives < i + 1)
+				{
+					stage.removeChild(this.livesBitmap[i]);
+					break;
+				}
+			}			    
 		},
 
 		addScore: function(){
