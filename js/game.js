@@ -1,4 +1,5 @@
 function init() {
+	
 	var stage = new createjs.Stage("canvas");
 	document.onkeydown = handleKeyDown;
 	document.onkeyup = handleKeyUp;
@@ -31,17 +32,13 @@ function init() {
 		},
 
 		handleCollisions: function(){
-			//console.table(this.enemies);
+			//shots hit ennemies && ennemies hit ship
 			for(var i = 0; i < this.shots.length; i++){
 				for(var j = 0; j < this.enemies.length; j++){
 					var colision = ndgmr.checkPixelCollision(this.shots[i], this.enemies[j].bitmap, 0);
 					if(colision)
 					{
-						var impact = new createjs.Bitmap('img/' + imgs.fire.hit.blue);
-						stage.addChild(impact);
-						impact.x = colision.x - (impact.image.width / 2);
-						impact.y = colision.y - (impact.image.height / 2);
-			            setTimeout(function(){stage.removeChild(impact);}, 50);
+						this.createImpact(colision);
 
 						stage.removeChild(this.shots[i]);
 						this.shots.splice(i, 1);
@@ -53,15 +50,38 @@ function init() {
 							this.enemies.splice(j, 1);
 						}
 						else if(this.enemies[j].damagesImg)
-						{
 							if(this.enemies[j].damagesImg[this.enemies[j].lives] !== undefined)
-							{
 								this.enemies[j].bitmap.image.src = 'img/' + this.enemies[j].damagesImg[this.enemies[j].lives];
-							}
-						}
 					}
 				}	
 			}
+			//colision enemy/ship
+			for(var j = 0; j < this.enemies.length; j++){
+				if(this.enemies[j].bitmap !== undefined)//if enemy still exists, check for colision
+				{
+					var colisionShip = ndgmr.checkPixelCollision(ship.bitmap, this.enemies[j].bitmap, 0);
+					if(colisionShip)
+					{
+						this.createImpact(colisionShip);
+						stage.removeChild(this.enemies[j].bitmap);
+						this.enemies.splice(j, 1);
+						ship.lives--;
+					}
+					if(ship.lives === 0)
+					{	
+						console.log('game over :(');
+					}
+				}
+				
+			}
+		},
+
+		createImpact: function(colision){
+			var impact = new createjs.Bitmap('img/' + imgs.fire.hit.small);
+			stage.addChild(impact);
+			impact.x = colision.x - (impact.image.width / 2);
+			impact.y = colision.y - (impact.image.height / 2);
+			setTimeout(function(){stage.removeChild(impact);}, 50);
 		}
 
 	};

@@ -33,7 +33,8 @@ const imgs = {
 		enemy: 'spaceshooter/PNG/Lasers/laserRed07.png', 
 		hit: {
 			blue: 'spaceshooter/PNG/Lasers/laserBlue10.png', 
-			red: 'spaceshooter/PNG/Lasers/laserBlue10.png'
+			red: 'spaceshooter/PNG/Lasers/laserRed10.png',
+			small: 'spaceshooter/PNG/Effects/star2.png'
 		}
 	},
 	rocks: {
