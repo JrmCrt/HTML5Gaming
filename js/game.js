@@ -5,6 +5,10 @@ function init() {
 	var game = {
 		shots: [],
 		enemies: [],
+		score: {
+			points : 0, 
+			bitmap: false
+		},
 		state: {
 			pause: false,
 			over: false,
@@ -17,6 +21,7 @@ function init() {
 			createjs.Ticker.setFPS(60);
 			ship.append();
 			sounds.register();
+			this.addScore();
 		},
 
 		addEnemy: function(enemy){
@@ -32,7 +37,7 @@ function init() {
 		},
 
 		handleCollisions: function(){
-			//shots hit ennemies && ennemies hit ship
+			//shots hit ennemies
 			for(var i = 0; i < this.shots.length; i++){
 				for(var j = 0; j < this.enemies.length; j++){
 					var colision = ndgmr.checkPixelCollision(this.shots[i], this.enemies[j].bitmap, 0);
@@ -46,8 +51,7 @@ function init() {
 
 						if(this.enemies[j].lives <= 0)
 						{
-							stage.removeChild(this.enemies[j].bitmap);
-							this.enemies.splice(j, 1);
+							this.killShip(this.enemies[j], j);
 						}
 						else if(this.enemies[j].damagesImg)
 							if(this.enemies[j].damagesImg[this.enemies[j].lives] !== undefined)
@@ -57,15 +61,16 @@ function init() {
 			}
 			//colision enemy/ship
 			for(var j = 0; j < this.enemies.length; j++){
-				if(this.enemies[j].bitmap !== undefined)//if enemy still exists, check for colision
+				if(this.enemies[j].bitmap !== undefined)
 				{
 					var colisionShip = ndgmr.checkPixelCollision(ship.bitmap, this.enemies[j].bitmap, 0);
 					if(colisionShip && !ship.invicible)
 					{
 						this.createImpact(colisionShip);
-						stage.removeChild(this.enemies[j].bitmap);
-						this.enemies.splice(j, 1);
+						var sound = createjs.Sound.play('lose');
+						sound.volume = 1;
 						ship.lives--;
+						this.killShip(this.enemies[j], j);
 						ship.invicible = true;
 						ship.bitmap.alpha = 0.5;
 						setTimeout(function(){
@@ -88,6 +93,24 @@ function init() {
 			impact.x = colision.x - (impact.image.width / 2);
 			impact.y = colision.y - (impact.image.height / 2);
 			setTimeout(function(){stage.removeChild(impact);}, 50);
+		},
+
+		addScore: function(){
+			if(!this.score.bitmap)
+			{
+				this.score.bitmap = new createjs.Text('00000', "50px future", "#FFFFFF");			    
+				this.score.bitmap.x = stage.canvas.width - 210;
+			    this.score.bitmap.y = stage.canvas.height - 60;
+			    stage.addChild(this.score.bitmap);
+			}
+			this.score.bitmap.text = '0'.repeat(5 - String(this.score.points).length) + this.score.points;
+		},
+
+		killShip: function(enemy, index){
+			stage.removeChild(enemy.bitmap);
+			this.score.points += enemy.points;
+			this.addScore();
+			this.enemies.splice(index, 1);
 		}
 
 	};
@@ -143,12 +166,12 @@ function init() {
 
 	game.start();
 
-	for (var i = 0; i < 5; i++) {
-		var temp = new Enemy(imgs.enemies.alien.regular, 5, 3, imgs.fire.enemy, imgs.enemies.alien.damages);
+	for (var i = 0; i < 5; i++){
+		var temp = new Enemy(imgs.enemies.alien.regular, 5, 3, imgs.fire.enemy, 100, imgs.enemies.alien.damages);
 		game.addEnemy(temp);
 	}
 
-	function handleTick(event) {
+	function handleTick(event){
 		for(var v in ship.direction)
 			if(ship.direction[v])
 				ship.move(v);
@@ -160,7 +183,7 @@ function init() {
 		stage.update()
 	}
 
-	function handleKeyDown(e) {
+	function handleKeyDown(e){
 		//e.preventDefault();
 		//alert(e.keyCode);
 		var key = e.keyCode;
@@ -173,7 +196,7 @@ function init() {
 
 	}
 
-	function handleKeyUp(e) {
+	function handleKeyUp(e){
 		var key = e.keyCode;
 		for(var v of Object.keys(keys.direction))
 			if(key == keys.direction[v])

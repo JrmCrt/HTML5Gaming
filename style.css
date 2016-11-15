@@ -1,3 +1,8 @@
+@font-face{
+	font-family: future;
+	src: url(img/spaceshooter/Bonus/kenvector_future.ttf);
+}
+
 body {
 	text-align: center;
 	background-image: url(img/spaceshooter/Backgrounds/blue.png);
