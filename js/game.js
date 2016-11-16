@@ -6,8 +6,12 @@ function init() {
 		shots: [],
 		enemies: [],
 		score: {
-			points : 0, 
+			points: 0, 
 			bitmap: false
+		},
+		text: {
+			score: false,
+			gameOver: false
 		},
 		livesBitmap: [],
 		state: {
@@ -81,9 +85,7 @@ function init() {
 						}, 750);
 					}
 					if(ship.lives === 0)
-					{	
-						console.log('game over :(');
-					}
+						this.gameOver();
 				}
 				
 			}
@@ -103,7 +105,7 @@ function init() {
 				for(var i = 0; i < ship.lives; i++){
 					var temp = new createjs.Bitmap('img/' + imgs.life);
 					temp.x = 20;
-				    temp.y = stage.canvas.height - 45 - (i * 40);
+				    temp.y = 20 + (i * 40);
 				    this.livesBitmap.push(temp);
 				    stage.addChild(temp);
 				}
@@ -124,7 +126,7 @@ function init() {
 			{
 				this.score.bitmap = new createjs.Text('00000', "50px future", "#FFFFFF");			    
 				this.score.bitmap.x = stage.canvas.width - 210;
-			    this.score.bitmap.y = stage.canvas.height - 60;
+			    this.score.bitmap.y =  20;
 			    stage.addChild(this.score.bitmap);
 			}
 			this.score.bitmap.text = '0'.repeat(5 - String(this.score.points).length) + this.score.points;
@@ -135,6 +137,22 @@ function init() {
 			this.score.points += enemy.points;
 			this.addScore();
 			this.enemies.splice(index, 1);
+		},
+
+		gameOver : function(){
+			if(!this.text.gameOver)
+			{
+				console.log('Game over :(');
+				this.text.gameOver = new createjs.Text('GAME OVER', "70px future", "#FFFFFF");
+				this.text.gameOver.x = stage.canvas.width / 2 - this.text.gameOver.getMeasuredWidth() / 2;
+				this.text.gameOver.y =  300;
+				stage.addChild(this.text.gameOver);
+				this.text.score = new createjs.Text('00000 POINTS', "55px future", "#FFFFFF");			    
+				this.text.score.x = stage.canvas.width / 2 - this.text.score.getMeasuredWidth() / 2;
+			    this.text.score.y =  400;
+			    this.text.score.text = this.score.bitmap.text + " POINTS";
+			    stage.addChild(this.text.score);
+			}
 		}
 
 	};
