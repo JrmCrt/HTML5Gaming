@@ -3,6 +3,7 @@ function init() {
 	var stage = new createjs.Stage("canvas");
 
 	var game = {
+		level: 1,
 		shots: [],
 		enemies: [],
 		score: {
@@ -11,23 +12,55 @@ function init() {
 		},
 		text: {
 			score: false,
-			gameOver: false
+			gameOver: false,
+			start: false
 		},
 		livesBitmap: [],
 		state: {
 			pause: false,
 			over: false,
+			started: false
+		},
+
+		startScreen: function(){
+			stage.enableMouseOver(10);
+			this.text.start = new createjs.Text("START", "50px Future", "#FFFFFF");
+		    this.text.start.x = stage.canvas.width/2 - this.text.start.getMeasuredWidth()/2;
+		    this.text.start.y = stage.canvas.height/2 - this.text.start.getMeasuredHeight()/2;
+		    var hit = new createjs.Shape();
+			hit.graphics.beginFill("#000").drawRect(0, 0, this.text.start.getMeasuredWidth(), this.text.start.getMeasuredHeight());
+			this.text.start.hitArea = hit;
+			this.text.start.alpha = 0.7;
+			this.text.start.on("mouseover", function(event) { game.text.start.alpha = 1; });
+			this.text.start.on("mouseout", function(event) { game.text.start.alpha = 0.7; });
+			this.text.start.addEventListener("click", function(event) { game.start(); })
+		    stage.addChild(this.text.start);
+		    stage.update();
 		},
 
 		start: function(){
-			document.onkeydown = handleKeyDown;
-			document.onkeyup = handleKeyUp;
-			createjs.Ticker.addEventListener("tick", handleTick);
-			createjs.Ticker.setFPS(60);
-			ship.append();
-			sounds.register();
-			this.addScore();
-			this.handleLives();
+			if(!this.state.started)
+			{
+				stage.enableMouseOver(0);
+				this.startScreen();
+				document.onkeydown = handleKeyDown;
+				document.onkeyup = handleKeyUp;
+				createjs.Ticker.addEventListener("tick", handleTick);
+				createjs.Ticker.setFPS(60);
+				sounds.register();
+				this.state.started = true;
+			}
+			else{
+				ship.append();
+				stage.removeChild(this.text.start);
+				this.addScore();
+				this.handleLives();
+				//adding enemies...just for now
+				for (var i = 0; i < 5; i++){
+					var temp = new Enemy(imgs.enemies.alien.regular, 5, 3, imgs.fire.enemy, 100, imgs.enemies.alien.damages);
+					this.addEnemy(temp);
+				}
+			}
 		},
 
 		addEnemy: function(enemy){
@@ -65,7 +98,7 @@ function init() {
 				}	
 			}
 			//colision enemy/ship
-			for(var j = 0; j < this.enemies.length; j++){
+			for(var j = 0; j < this.enemies.length && !this.state.over; j++){
 				if(this.enemies[j].bitmap !== undefined)
 				{
 					var colisionShip = ndgmr.checkPixelCollision(ship.bitmap, this.enemies[j].bitmap, 0);
@@ -142,16 +175,19 @@ function init() {
 		gameOver : function(){
 			if(!this.text.gameOver)
 			{
-				console.log('Game over :(');
 				this.text.gameOver = new createjs.Text('GAME OVER', "70px future", "#FFFFFF");
 				this.text.gameOver.x = stage.canvas.width / 2 - this.text.gameOver.getMeasuredWidth() / 2;
-				this.text.gameOver.y =  300;
+				this.text.gameOver.y =  250;
 				stage.addChild(this.text.gameOver);
-				this.text.score = new createjs.Text('00000 POINTS', "55px future", "#FFFFFF");			    
+
+				this.text.score = new createjs.Text(this.score.bitmap.text + " POINTS", "55px future", "#FFFFFF");			    
 				this.text.score.x = stage.canvas.width / 2 - this.text.score.getMeasuredWidth() / 2;
-			    this.text.score.y =  400;
-			    this.text.score.text = this.score.bitmap.text + " POINTS";
+			    this.text.score.y =  350;
 			    stage.addChild(this.text.score);
+
+			    stage.removeChild(this.score.bitmap);
+			    stage.removeChild(ship.bitmap);
+			    this.state.over = true;
 			}
 		}
 
@@ -208,10 +244,6 @@ function init() {
 
 	game.start();
 
-	for (var i = 0; i < 5; i++){
-		var temp = new Enemy(imgs.enemies.alien.regular, 5, 3, imgs.fire.enemy, 100, imgs.enemies.alien.damages);
-		game.addEnemy(temp);
-	}
 
 	function handleTick(event){
 		for(var v in ship.direction)
