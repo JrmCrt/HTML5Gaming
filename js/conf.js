@@ -106,8 +106,6 @@ const enemies = {
 		},
 
 		shoot: function(game){
-			//console.log('shoot ! ');
-			//console.table(game)
 			if(!this.alive) 
 				return false;
 
@@ -115,9 +113,9 @@ const enemies = {
 				this.stage.addChild(fire);
 				fire.y = this.bitmap.y + 35;
 				fire.x = this.bitmap.x + this.bitmap.image.width / 2 - (fire.image.width / 2);
-				game.enemiesShots.push(fire)
+				game.enemiesShots.push(fire);
 				createjs.Tween.get(fire)
-                .to({y: this.bitmap.y + this.stage.canvas.height}, 1500, createjs.Ease.getPowInOut(1));
+                	.to({y: this.bitmap.y + this.stage.canvas.height}, 1500, createjs.Ease.getPowInOut(1));
 		}
 	}
 };

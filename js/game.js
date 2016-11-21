@@ -121,13 +121,35 @@ function init() {
 						setTimeout(function(){
 							ship.invicible = false;
 							ship.bitmap.alpha = 1;
-						}, 750);
+						}, 1000);
 					}
 					if(ship.lives === 0)
 						this.gameOver();
 				}
-				
 			}
+			//colision enemies shots/ship	
+			for(var i = this.enemiesShots.length - 1; i >= 0; i--)
+			{
+				console.log(this.enemiesShots[i].x);
+				var colisionShot = ndgmr.checkPixelCollision(ship.bitmap, this.enemiesShots[i], 0);
+				if(colisionShot && !ship.invicible)
+					{
+						this.createImpact(colisionShot);
+						var sound = createjs.Sound.play('lose');
+						sound.volume = 1;
+						ship.lives--;
+						this.handleLives();
+						ship.invicible = true;
+						ship.bitmap.alpha = 0.5;
+						setTimeout(function(){
+							ship.invicible = false;
+							ship.bitmap.alpha = 1;
+						}, 1000);
+					}
+					if(ship.lives === 0)
+						this.gameOver();
+			}	
+			
 		},
 
 		createImpact: function(colision){
@@ -182,7 +204,9 @@ function init() {
 		moveEnemies: function(){
 			if(!this.state.moving)
 				for(var v of this.enemies)
+				{	
 					v.pattern(this);
+				}
 			
 			this.state.moving = true;
 		},
