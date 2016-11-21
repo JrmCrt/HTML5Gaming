@@ -7,6 +7,7 @@ function init() {
 		shots: [],
 		enemiesShots: [],
 		enemies: [],
+		bonuses: [],
 		score: {
 			points: 0, 
 			bitmap: false
@@ -95,8 +96,21 @@ function init() {
 						this.shots.splice(i, 1);
 						this.enemies[j].lives -= ship.firePower;
 
-						if(this.enemies[j].lives <= 0)
+						if(this.enemies[j].lives <= 0){
 							this.killShip(this.enemies[j], j);
+							if(rand(0, 9) > 1){
+								var bonuses = Object.keys(imgs.bonus);
+								var randBonus = bonuses[rand(0, bonuses.length - 1)];
+								var bonus = new createjs.Bitmap('img/' + imgs.bonus[randBonus]);
+								bonus.x = colision.x;
+								bonus.y = colision.y;
+								this.bonuses.push(bonus);
+								stage.addChild(bonus);
+								createjs.Tween.get(bonus)
+                					.to({y: colision.y + stage.canvas.height},
+                					 3000, createjs.Ease.getPowInOut(1));
+							}
+						}
 
 						else if(this.enemies[j].damagesImg)
 							if(this.enemies[j].damagesImg[this.enemies[j].lives] !== undefined)
@@ -132,11 +146,12 @@ function init() {
 			//colision enemies shots/ship	
 			for(var i = this.enemiesShots.length - 1; i >= 0; i--)
 			{
-				console.log(this.enemiesShots[i].x);
 				var colisionShot = ndgmr.checkPixelCollision(ship.bitmap, this.enemiesShots[i], 0);
 				if(colisionShot && !ship.invicible)
 					{
 						this.createImpact(colisionShot);
+						stage.removeChild(this.enemiesShots[i]);
+						this.enemiesShots.splice(i, 1);
 						var sound = createjs.Sound.play('lose');
 						sound.volume = 1;
 						ship.lives--;
@@ -150,6 +165,19 @@ function init() {
 					}
 					if(ship.lives === 0)
 						this.gameOver();
+			}
+
+			for(var i = this.bonuses.length - 1; i >= 0; i--)
+			{
+				var colisionBonus = ndgmr.checkPixelCollision(ship.bitmap, this.bonuses[i], 0);
+				if(colisionBonus)
+				{
+					stage.removeChild(this.bonuses[i]);
+					this.bonuses.splice(i, 1);
+					stage.removeChild(this.bonuses[i]);
+					var sound = createjs.Sound.play('bonus');
+					sound.volume = 2;
+				}
 			}	
 			
 		},
@@ -298,7 +326,6 @@ function init() {
 				ship.shoot();
 
 		game.handleCollisions();	
-		console.log(game.enemiesShots.length);
 		stage.update()
 	}
 
