@@ -19,7 +19,8 @@ function init() {
 		state: {
 			pause: false,
 			over: false,
-			started: false
+			started: false,
+			moving: false
 		},
 
 		startScreen: function(){
@@ -33,7 +34,7 @@ function init() {
 			this.text.start.alpha = 0.7;
 			this.text.start.on("mouseover", function(event) { game.text.start.alpha = 1; });
 			this.text.start.on("mouseout", function(event) { game.text.start.alpha = 0.7; });
-			this.text.start.addEventListener("click", function(event) { game.start(); })
+			this.text.start.addEventListener("click", function(event) { game.state.started = true;game.start(); })
 		    stage.addChild(this.text.start);
 		    stage.update();
 		},
@@ -48,7 +49,6 @@ function init() {
 				createjs.Ticker.addEventListener("tick", handleTick);
 				createjs.Ticker.setFPS(60);
 				sounds.register();
-				this.state.started = true;
 			}
 			else{
 				ship.append();
@@ -57,9 +57,12 @@ function init() {
 				this.handleLives();
 				//adding enemies...just for now
 				for (var i = 0; i < 5; i++){
-					var temp = new Enemy(imgs.enemies.alien.regular, 5, 3, imgs.fire.enemy, 100, imgs.enemies.alien.damages);
+					var temp = new Enemy(imgs.enemies.alien.regular, 5, 5, imgs.fire.enemy, 100, false, enemies.alien.pattern, stage, imgs.enemies.alien.damages);
 					this.addEnemy(temp);
 				}
+				setTimeout(function(){
+						game.moveEnemies();
+				}, 1000);
 			}
 		},
 
@@ -70,15 +73,17 @@ function init() {
 			var EnemyX = rand(5, stage.canvas.width - enemy.bitmap.image.width);
 			enemy.bitmap.x = rand(5, stage.canvas.width - enemy.bitmap.image.width); 
 			enemy.bitmap.y = - enemy.bitmap.image.height ;
+			enemy.added = false;
 			createjs.Tween.get(enemy.bitmap)
-                .to({x: EnemyX, y: EnemyY}, 1000, createjs.Ease.getPowInOut(1));
+                .to({x: EnemyX, y: EnemyY}, 1000, createjs.Ease.getPowInOut(1))
+                .call(function(){enemy.added = true;});
 			this.enemies.push(enemy);
 		},
 
 		handleCollisions: function(){
-			//shots hit ennemies
-			for(var i = 0; i < this.shots.length; i++){
-				for(var j = 0; j < this.enemies.length; j++){
+			//shots hit enemies
+			for(var i = this.shots.length - 1; i >= 0; i--){
+				for(var j = this.enemies.length - 1; j >= 0; j--){
 					var colision = ndgmr.checkPixelCollision(this.shots[i], this.enemies[j].bitmap, 0);
 					if(colision)
 					{
@@ -98,7 +103,7 @@ function init() {
 				}	
 			}
 			//colision enemy/ship
-			for(var j = 0; j < this.enemies.length && !this.state.over; j++){
+			for(var j = this.enemies.length - 1; j >= 0 && !this.state.over; j--){
 				if(this.enemies[j].bitmap !== undefined)
 				{
 					var colisionShip = ndgmr.checkPixelCollision(ship.bitmap, this.enemies[j].bitmap, 0);
@@ -172,7 +177,16 @@ function init() {
 			this.enemies.splice(index, 1);
 		},
 
-		gameOver : function(){
+		moveEnemies: function(){
+			console.log(this.state.moving + ' moving state');
+			if(!this.state.moving)
+				for(var v of this.enemies)
+					v.pattern();
+			
+			this.state.moving = true;
+		},
+
+		gameOver: function(){
 			if(!this.text.gameOver)
 			{
 				this.text.gameOver = new createjs.Text('GAME OVER', "70px future", "#FFFFFF");
@@ -212,7 +226,9 @@ function init() {
 		}, 
 
 		shoot: function(){
-			if(this.canFire)
+			if(!game.state.started)
+				return false;
+			if(this.canFire && !game.state.over)
 			{	
 				var fire = new createjs.Bitmap('img/' + imgs.fire[this.firePower]);
 				stage.addChild(fire);
@@ -230,6 +246,8 @@ function init() {
 		},
 
 		move: function(dir){
+			if(!game.state.started || game.state.over)
+				return false;
 			if(dir == 'left' && this.bitmap.x > 5)
 				this.bitmap.x -= this.speed;
 			if(dir == 'right' && this.bitmap.x < (stage.canvas.width - this.bitmap.image.width) - 5)
@@ -243,7 +261,6 @@ function init() {
 	};
 
 	game.start();
-
 
 	function handleTick(event){
 		for(var v in ship.direction)
@@ -267,7 +284,6 @@ function init() {
 
 		if(keys.fire.includes(key))
 			ship.firing = true;
-
 	}
 
 	function handleKeyUp(e){

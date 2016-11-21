@@ -51,7 +51,7 @@ const imgs = {
 			regular: 'alien-pack/PNG/shipBlue.png',
 			damages: {
 				1: 'alien-pack/PNG/shipBlue_damage2.png',
-				2: 'alien-pack/PNG/shipBlue_damage1.png'
+				3: 'alien-pack/PNG/shipBlue_damage1.png'
 			}
 		}	
 	},
@@ -72,6 +72,42 @@ const imgs = {
 	shield: 'spaceshooter/PNG/Effects/shield3.png'
 };
 
+const enemies = {
+	alien: {
+		pattern: function(){
+				var distance = 100;
+				var possibleMoves = [{x: this.bitmap.x + 100, y: this.bitmap.y + 100}
+					,{x: this.bitmap.x + 100, y: this.bitmap.y - 100}
+					,{x: this.bitmap.x - 100, y: this.bitmap.y + 100}
+					,{x: this.bitmap.x - 100, y: this.bitmap.y - 100}
+				];
+
+				var maxX = this.stage.canvas.width - this.bitmap.image.width;
+				var maxY = this.stage.canvas.height - this.bitmap.image.height;
+
+				for(var i = possibleMoves.length - 1; i >= 0; i--)
+					if(possibleMoves[i].x < 0 || possibleMoves[i].x > maxX)
+							possibleMoves.splice(i, 1);
+					else if(possibleMoves[i].y < 0 || possibleMoves[i].y > maxY)
+							possibleMoves.splice(i, 1);
+
+				var move = rand(0, possibleMoves.length - 1);
+
+				createjs.Tween.get(this.bitmap)
+                	.to({x: possibleMoves[move].x, y: possibleMoves[move].y}, 1000, createjs.Ease.getPowInOut(1))
+        			.call(this.pattern, [], this);
+		}
+	}
+};
+
+function moveAgain()
+{
+	//console.log(stage.canvas.width);
+	console.log('huh?')
+	//console.table(enemy)
+	//enemy.pattern(stage);
+}
+
 function rand(min, max){
-	return Math.floor(Math.random() * max) + min;
+	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
