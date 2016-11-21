@@ -102,6 +102,7 @@ function init() {
 								var bonuses = Object.keys(imgs.bonus);
 								var randBonus = bonuses[rand(0, bonuses.length - 1)];
 								var bonus = new createjs.Bitmap('img/' + imgs.bonus[randBonus]);
+								bonus.type = randBonus;
 								bonus.x = colision.x;
 								bonus.y = colision.y;
 								this.bonuses.push(bonus);
@@ -123,7 +124,7 @@ function init() {
 				if(this.enemies[j].bitmap !== undefined)
 				{
 					var colisionShip = ndgmr.checkPixelCollision(ship.bitmap, this.enemies[j].bitmap, 0);
-					if(colisionShip && !ship.invicible)
+					if(colisionShip && !ship.invicible && !this.state.over )
 					{
 						this.createImpact(colisionShip);
 						var sound = createjs.Sound.play('lose');
@@ -144,35 +145,36 @@ function init() {
 				}
 			}
 			//colision enemies shots/ship	
-			for(var i = this.enemiesShots.length - 1; i >= 0; i--)
+			for(var i = this.enemiesShots.length - 1; i >= 0 && !this.state.over ; i--)
 			{
 				var colisionShot = ndgmr.checkPixelCollision(ship.bitmap, this.enemiesShots[i], 0);
-				if(colisionShot && !ship.invicible)
-					{
-						this.createImpact(colisionShot);
-						stage.removeChild(this.enemiesShots[i]);
-						this.enemiesShots.splice(i, 1);
-						var sound = createjs.Sound.play('lose');
-						sound.volume = 1;
-						ship.lives--;
-						this.handleLives();
-						ship.invicible = true;
-						ship.bitmap.alpha = 0.5;
+				if(colisionShot && !ship.invicible && !this.state.over )
+				{
+					this.createImpact(colisionShot);
+					stage.removeChild(this.enemiesShots[i]);
+					this.enemiesShots.splice(i, 1);
+					var sound = createjs.Sound.play('lose');
+					sound.volume = 1;
+					ship.lives--;
+					this.handleLives();
+					ship.invicible = true;
+					ship.bitmap.alpha = 0.5;
 						setTimeout(function(){
-							ship.invicible = false;
-							ship.bitmap.alpha = 1;
-						}, 1000);
-					}
+						ship.invicible = false;
+						ship.bitmap.alpha = 1;
+					}, 1000);
+				}
 					if(ship.lives === 0)
 						this.gameOver();
 			}
 
-			for(var i = this.bonuses.length - 1; i >= 0; i--)
+			for(var i = this.bonuses.length - 1; i >= 0 && !this.state.over; i--)
 			{
 				var colisionBonus = ndgmr.checkPixelCollision(ship.bitmap, this.bonuses[i], 0);
 				if(colisionBonus)
 				{
 					stage.removeChild(this.bonuses[i]);
+					this.handleBonus(this.bonuses[i].type);
 					this.bonuses.splice(i, 1);
 					stage.removeChild(this.bonuses[i]);
 					var sound = createjs.Sound.play('bonus');
@@ -207,9 +209,29 @@ function init() {
 				if(ship.lives < i + 1)
 				{
 					stage.removeChild(this.livesBitmap[i]);
+					this.livesBitmap.splice(i, 1);
 					break;
 				}
-			}			    
+			}
+
+			
+				if(ship.lives > this.livesBitmap.length)
+				{
+					var temp = new createjs.Bitmap('img/' + imgs.life);
+					temp.x = 20;
+				    temp.y = 20 + (this.livesBitmap.length * 40);
+				    this.livesBitmap.push(temp);
+				    stage.addChild(temp);
+				}		    
+		},
+
+		handleBonus: function(bonus){
+			console.log(bonus + '!');
+			if(bonus === 'life')
+			{
+				ship.lives++;
+				this.handleLives();	
+			}
 		},
 
 		addScore: function(){
@@ -325,7 +347,7 @@ function init() {
 		if(ship.firing)
 				ship.shoot();
 
-		game.handleCollisions();	
+		game.handleCollisions();
 		stage.update()
 	}
 
