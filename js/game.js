@@ -58,7 +58,8 @@ function init() {
 				this.handleLives();
 				//adding enemies...just for now
 				for (var i = 0; i < 5; i++){
-					var temp = new Enemy(imgs.enemies.alien.regular, 5, 5, imgs.fire.enemy, 100, false, enemies.alien.pattern, stage, enemies.alien.shoot, imgs.enemies.alien.damages);
+					var temp = new Enemy(imgs.enemies.alien.regular, 5, 5, imgs.fire.enemy, 100, false,
+					 enemies.alien.pattern, stage, enemies.alien.shoot, false, imgs.enemies.alien.damages);
 					this.addEnemy(temp);
 				}
 				setTimeout(function(){
@@ -115,7 +116,8 @@ function init() {
 						sound.volume = 1;
 						ship.lives--;
 						this.handleLives();
-						this.killShip(this.enemies[j], j);
+						if(!this.enemies[j].boss) 
+							this.killShip(this.enemies[j], j);
 						ship.invicible = true;
 						ship.bitmap.alpha = 0.5;
 						setTimeout(function(){

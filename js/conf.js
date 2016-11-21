@@ -98,7 +98,7 @@ const enemies = {
 				var move = rand(0, possibleMoves.length - 1);
 
 				createjs.Tween.get(this.bitmap)
-                	.to({x: possibleMoves[move].x, y: possibleMoves[move].y}, 1000, createjs.Ease.getPowInOut(1))
+                	.to({x: possibleMoves[move].x, y: possibleMoves[move].y}, rand(800, 1200), createjs.Ease.getPowInOut(1))
         			.call(this.pattern, [game], this)
         			.call(this.shoot, [game], this);
 			}
@@ -107,6 +107,9 @@ const enemies = {
 
 		shoot: function(game){
 			if(!this.alive) 
+				return false;
+
+			if(rand(0, 9) < 5)
 				return false;
 
 			var fire = new createjs.Bitmap('img/' + imgs.fire.enemy[1]);
