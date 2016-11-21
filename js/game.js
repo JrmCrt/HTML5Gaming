@@ -5,6 +5,7 @@ function init() {
 	var game = {
 		level: 1,
 		shots: [],
+		enemiesShots: [],
 		enemies: [],
 		score: {
 			points: 0, 
@@ -57,7 +58,7 @@ function init() {
 				this.handleLives();
 				//adding enemies...just for now
 				for (var i = 0; i < 5; i++){
-					var temp = new Enemy(imgs.enemies.alien.regular, 5, 5, imgs.fire.enemy, 100, false, enemies.alien.pattern, stage, imgs.enemies.alien.damages);
+					var temp = new Enemy(imgs.enemies.alien.regular, 5, 5, imgs.fire.enemy, 100, false, enemies.alien.pattern, stage, enemies.alien.shoot, imgs.enemies.alien.damages);
 					this.addEnemy(temp);
 				}
 				setTimeout(function(){
@@ -174,14 +175,14 @@ function init() {
 			stage.removeChild(enemy.bitmap);
 			this.score.points += enemy.points;
 			this.addScore();
+			enemy.alive = false;
 			this.enemies.splice(index, 1);
 		},
 
 		moveEnemies: function(){
-			console.log(this.state.moving + ' moving state');
 			if(!this.state.moving)
 				for(var v of this.enemies)
-					v.pattern();
+					v.pattern(this);
 			
 			this.state.moving = true;
 		},
@@ -271,6 +272,7 @@ function init() {
 				ship.shoot();
 
 		game.handleCollisions();	
+		console.log(game.enemiesShots.length);
 		stage.update()
 	}
 

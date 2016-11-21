@@ -1,6 +1,6 @@
 class Enemy {
 
-	constructor(image, speed, lives, fireImg, points, isBoss, pattern, canvas, damagesImg = false){
+	constructor(image, speed, lives, fireImg, points, isBoss, pattern, canvas, shoot, damagesImg = false){
 		this.image = image;
 		this.speed = speed;
 		this.lives = lives;
@@ -12,5 +12,7 @@ class Enemy {
 		this.moving = false;
 		this.added = false;
 		this.stage = canvas;
+		this.shoot = shoot;
+		this.alive = true;
 	}
 }

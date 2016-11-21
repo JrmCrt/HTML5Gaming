@@ -30,7 +30,9 @@ const imgs = {
 		2: 'spaceshooter/PNG/Lasers/laserBlue06.png', 
 		3: 'spaceshooter/PNG/Lasers/laserBlue16.png', 
 		4: 'spaceshooter/PNG/Lasers/laserBlue16.png', 
-		enemy: 'spaceshooter/PNG/Lasers/laserRed07.png', 
+		enemy: {
+			1:'spaceshooter/PNG/Lasers/laserRed07.png'
+		},	 
 		hit: {
 			blue: 'spaceshooter/PNG/Lasers/laserBlue10.png', 
 			red: 'spaceshooter/PNG/Lasers/laserRed10.png',
@@ -74,7 +76,9 @@ const imgs = {
 
 const enemies = {
 	alien: {
-		pattern: function(){
+		pattern: function(game){
+			if(this.alive)
+			{
 				var distance = 100;
 				var possibleMoves = [{x: this.bitmap.x + 100, y: this.bitmap.y + 100}
 					,{x: this.bitmap.x + 100, y: this.bitmap.y - 100}
@@ -95,18 +99,28 @@ const enemies = {
 
 				createjs.Tween.get(this.bitmap)
                 	.to({x: possibleMoves[move].x, y: possibleMoves[move].y}, 1000, createjs.Ease.getPowInOut(1))
-        			.call(this.pattern, [], this);
+        			.call(this.pattern, [game], this)
+        			.call(this.shoot, [game], this);
+			}
+
+		},
+
+		shoot: function(game){
+			//console.log('shoot ! ');
+			//console.table(game)
+			if(!this.alive) 
+				return false;
+
+			var fire = new createjs.Bitmap('img/' + imgs.fire.enemy[1]);
+				this.stage.addChild(fire);
+				fire.y = this.bitmap.y + 35;
+				fire.x = this.bitmap.x + this.bitmap.image.width / 2 - (fire.image.width / 2);
+				game.enemiesShots.push(fire)
+				createjs.Tween.get(fire)
+                .to({y: this.bitmap.y + this.stage.canvas.height}, 1500, createjs.Ease.getPowInOut(1));
 		}
 	}
 };
-
-function moveAgain()
-{
-	//console.log(stage.canvas.width);
-	console.log('huh?')
-	//console.table(enemy)
-	//enemy.pattern(stage);
-}
 
 function rand(min, max){
 	return Math.floor(Math.random() * (max - min + 1)) + min;
