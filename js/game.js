@@ -148,7 +148,7 @@ function init() {
 			for(var i = this.enemiesShots.length - 1; i >= 0 && !this.state.over ; i--)
 			{
 				var colisionShot = ndgmr.checkPixelCollision(ship.bitmap, this.enemiesShots[i], 0);
-				if(colisionShot && !ship.invicible && !this.state.over )
+				if(colisionShot && !ship.invicible && !this.state.over && !ship.shield)
 				{
 					this.createImpact(colisionShot);
 					stage.removeChild(this.enemiesShots[i]);
@@ -164,8 +164,16 @@ function init() {
 						ship.bitmap.alpha = 1;
 					}, 1000);
 				}
-					if(ship.lives === 0)
-						this.gameOver();
+				if(ship.shield){
+					var colisionShield = ndgmr.checkPixelCollision(ship.shield, this.enemiesShots[i], 0);
+					if(colisionShield){
+						this.createImpact(colisionShield);
+						stage.removeChild(this.enemiesShots[i]);
+						this.enemiesShots.splice(i, 1);	
+					}
+				}
+				if(ship.lives === 0)
+					this.gameOver();
 			}
 
 			for(var i = this.bonuses.length - 1; i >= 0 && !this.state.over; i--)
@@ -175,8 +183,8 @@ function init() {
 				{
 					stage.removeChild(this.bonuses[i]);
 					this.handleBonus(this.bonuses[i].type);
-					this.bonuses.splice(i, 1);
 					stage.removeChild(this.bonuses[i]);
+					this.bonuses.splice(i, 1);
 					var sound = createjs.Sound.play('bonus');
 					sound.volume = 2;
 				}
@@ -194,7 +202,6 @@ function init() {
 
 		handleLives: function(){
 			if(!this.livesBitmap.length)
-			{
 				for(var i = 0; i < ship.lives; i++){
 					var temp = new createjs.Bitmap('img/' + imgs.life);
 					temp.x = 20;
@@ -202,27 +209,23 @@ function init() {
 				    this.livesBitmap.push(temp);
 				    stage.addChild(temp);
 				}
-			}
 
 			for(var i = 0; i < this.livesBitmap.length; i++)
-			{
 				if(ship.lives < i + 1)
 				{
 					stage.removeChild(this.livesBitmap[i]);
 					this.livesBitmap.splice(i, 1);
 					break;
 				}
-			}
-
 			
-				if(ship.lives > this.livesBitmap.length)
-				{
-					var temp = new createjs.Bitmap('img/' + imgs.life);
-					temp.x = 20;
-				    temp.y = 20 + (this.livesBitmap.length * 40);
-				    this.livesBitmap.push(temp);
-				    stage.addChild(temp);
-				}		    
+			if(ship.lives > this.livesBitmap.length)
+			{
+				var temp = new createjs.Bitmap('img/' + imgs.life);
+				temp.x = 20;
+			    temp.y = 20 + (this.livesBitmap.length * 40);
+			    this.livesBitmap.push(temp);
+			    stage.addChild(temp);
+			}		    
 		},
 
 		handleBonus: function(bonus){
@@ -231,6 +234,31 @@ function init() {
 			{
 				ship.lives++;
 				this.handleLives();	
+			}
+			else if(bonus == 'shoot')
+				ship.firePower++;
+			else if(bonus == 'points')
+			{
+				this.score.points += 1000;
+				this.addScore();
+			}
+			else if(bonus == 'speed')
+			{
+				ship.speed *= 1.25;
+			}
+			else if(bonus == 'shield')
+			{
+				if(!ship.shield){
+	                ship.shield = new createjs.Bitmap('img/' + imgs.shield);
+	                ship.shield.x = ship.bitmap.x - 22;
+	                ship.shield.y = ship.bitmap.y - 35;
+	                stage.addChild(ship.shield);
+	                stage.update();
+	                setTimeout(function(){
+	                    stage.removeChild(ship.shield);
+	                    ship.shield = false;
+	                }, 5000);
+            	}
 			}
 		},
 
@@ -278,6 +306,8 @@ function init() {
 
 			    stage.removeChild(this.score.bitmap);
 			    stage.removeChild(ship.bitmap);
+			    ship.shield = false;
+			    stage.removeChild(ship.shield);
 			    this.state.over = true;
 			}
 		}
@@ -286,7 +316,8 @@ function init() {
 
 	var ship = {
 		bitmap: false,
-		speed: 6, 
+		speed: 6,
+		shield: false, 
 		image: imgs.ship,
 		lives: 3,
 		invicible : false,
@@ -325,14 +356,22 @@ function init() {
 		move: function(dir){
 			if(!game.state.started || game.state.over)
 				return false;
-			if(dir == 'left' && this.bitmap.x > 5)
+			if(dir == 'left' && this.bitmap.x > 5){
 				this.bitmap.x -= this.speed;
-			if(dir == 'right' && this.bitmap.x < (stage.canvas.width - this.bitmap.image.width) - 5)
+				this.shield.x -= this.speed;
+			}
+			else if(dir == 'right' && this.bitmap.x < (stage.canvas.width - this.bitmap.image.width) - 5){
 				this.bitmap.x += this.speed;
-			if(dir == 'up' && this.bitmap.y > 5)
+				this.shield.x += this.speed;
+			}
+			else if(dir == 'up' && this.bitmap.y > 5){
 				this.bitmap.y -= this.speed;
-			if(dir == 'down' && this.bitmap.y < (stage.canvas.height - this.bitmap.image.height) - 5)
+				this.shield.y -= this.speed;
+			}
+			else if(dir == 'down' && this.bitmap.y < (stage.canvas.height - this.bitmap.image.height) - 5){
 				this.bitmap.y += this.speed;
+				this.shield.y += this.speed;
+			}
 		}
 
 	};
@@ -352,8 +391,6 @@ function init() {
 	}
 
 	function handleKeyDown(e){
-		//e.preventDefault();
-		//alert(e.keyCode);
 		var key = e.keyCode;
 		for(var v of Object.keys(keys.direction))
 			if(key == keys.direction[v])

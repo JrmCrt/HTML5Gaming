@@ -29,7 +29,7 @@ const imgs = {
 		1: 'spaceshooter/PNG/Lasers/laserBlue07.png', 
 		2: 'spaceshooter/PNG/Lasers/laserBlue06.png', 
 		3: 'spaceshooter/PNG/Lasers/laserBlue16.png', 
-		4: 'spaceshooter/PNG/Lasers/laserBlue16.png', 
+		4: 'spaceExtension/PNG/Sprites/Missiles/spaceMissiles_001.png', 
 		enemy: {
 			1:'spaceshooter/PNG/Lasers/laserRed07.png'
 		},	 
