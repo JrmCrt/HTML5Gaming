@@ -73,11 +73,22 @@ const imgs = {
 	},
 	life: 'spaceshooter/PNG/UI/playerLife1_orange.png',
 	shield: 'spaceshooter/PNG/Effects/shield3.png',
-	speed: 'spaceExtension/PNG/Sprites/Effects/spaceEffects_007.png'
+	speed: 'spaceExtension/PNG/Sprites/Effects/spaceEffects_006.png'
 };
 
 const enemies = {
 	alien: {
+
+		stat:{
+			image: imgs.enemies.alien.regular,
+			speed: 5,
+			lives: 5,
+			fireImg: imgs.fire.enemy,
+			points: 100,
+			isBoss: false,
+			damagesImg: imgs.enemies.alien.damages
+		},
+
 		pattern: function(game){
 			if(this.alive)
 			{

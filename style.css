@@ -9,7 +9,7 @@ body {
 }
 
 canvas {
-	background-image: url(http://www.kodymccarthy.com/wp-content/uploads/2014/08/space_sample.png);
+	background-image: url(img/spaceshooter/Backgrounds/space_sample.png);
 	margin-top: 3%;
 	background-position: 0px 0px;
 	background-repeat: repeat;

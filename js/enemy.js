@@ -1,19 +1,20 @@
 class Enemy {
 
-	constructor(image, speed, lives, fireImg, points, isBoss, pattern, canvas, shoot, boss, damagesImg = false){
-		this.image = image;
-		this.speed = speed;
-		this.lives = lives;
-		this.fireImg = fireImg;
-		this.points = points;
-		this.isBoss = isBoss;
+	constructor(stat, pattern, canvas, shoot){
+		console.table(stat);
+		this.image = stat.image;
+		this.speed = stat.speed;
+		this.lives = stat.lives;
+		this.fireImg = stat.fireImg;
+		this.points = stat.points;
+		this.isBoss = stat.isBoss;
+		this.damagesImg = stat.damagesImg;
+		this.boss = stat.boss
 		this.pattern = pattern;
-		this.damagesImg = damagesImg;
 		this.moving = false;
 		this.added = false;
 		this.stage = canvas;
 		this.shoot = shoot;
 		this.alive = true;
-		this.boss = boss
 	}
 }

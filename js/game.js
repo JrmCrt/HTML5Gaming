@@ -59,8 +59,8 @@ function init() {
 				this.handleLives();
 				//adding enemies...just for now
 				for (var i = 0; i < 5; i++){
-					var temp = new Enemy(imgs.enemies.alien.regular, 5, 5, imgs.fire.enemy, 100, false,
-					 enemies.alien.pattern, stage, enemies.alien.shoot, false, imgs.enemies.alien.damages);
+					var temp = new Enemy(enemies.alien.stat, enemies.alien.pattern, 
+						stage, enemies.alien.shoot);
 					this.addEnemy(temp);
 				}
 				setTimeout(function(){
@@ -267,6 +267,9 @@ function init() {
 	                ship.shield.x = ship.bitmap.x - 22;
 	                ship.shield.y = ship.bitmap.y - 35;
 	                stage.addChild(ship.shield);
+	                createjs.Tween.get(ship.shield)
+                	.wait(4000)
+                	.to({alpha: 0}, 1000, createjs.Ease.getPowInOut(1));
 	                setTimeout(function(){
 	                    stage.removeChild(ship.shield);
 	                    ship.shield = false;
