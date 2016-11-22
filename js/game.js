@@ -58,29 +58,41 @@ function init() {
 				this.addScore();
 				this.handleLives();
 				//adding enemies...just for now
-				for (var i = 0; i < 5; i++){
+				for (var i = 0; i < 1; i++){
 					var temp = new Enemy(enemies.alien.stat, enemies.alien.pattern, 
 						stage, enemies.alien.shoot);
 					this.addEnemy(temp);
 				}
-				setTimeout(function(){
-						game.moveEnemies();
-				}, 1000);
 			}
 		},
 
-		addEnemy: function(enemy){
+		addEnemy: function(enemy, meteor = false){
 			enemy.bitmap = new createjs.Bitmap('img/' + enemy.image);
 			stage.addChild(enemy.bitmap);
-			var EnemyY = rand(5, 100);
+			var EnemyY = !meteor ? rand(5, 100) : - enemy.bitmap.image.height;
 			var EnemyX = rand(5, stage.canvas.width - enemy.bitmap.image.width);
 			enemy.bitmap.x = rand(5, stage.canvas.width - enemy.bitmap.image.width); 
 			enemy.bitmap.y = - enemy.bitmap.image.height ;
 			enemy.added = false;
+			this.enemies.push(enemy);
 			createjs.Tween.get(enemy.bitmap)
                 .to({x: EnemyX, y: EnemyY}, 1000, createjs.Ease.getPowInOut(1))
-                .call(function(){enemy.added = true;});
-			this.enemies.push(enemy);
+                .call(function(){enemy.added = true;})
+                .call(function(){enemy.pattern(game);})
+		
+		},
+
+		addMeteor: function(){
+			console.log('new enemies');
+			if(rand(0, 100) > 99){
+				console.log('new meteor');
+				var meteor = new Enemy(enemies.meteor.stat, enemies.meteor.pattern,
+				stage, function(){});
+				var temp = new Enemy(enemies.alien.stat, enemies.alien.pattern, 
+						stage, enemies.alien.shoot);
+					this.addEnemy(temp);
+				this.addEnemy(meteor, true);
+			}
 		},
 
 		handleCollisions: function(){
@@ -97,8 +109,7 @@ function init() {
 						this.enemies[j].lives -= ship.firePower;
 
 						if(this.enemies[j].lives <= 0){
-							this.killShip(this.enemies[j], j);
-							if(rand(0, 9) > 1){
+							if(rand(0, 9) >= 0 && this.enemies[j].dropBonus){
 								var bonuses = Object.keys(imgs.bonus);
 								var randBonus = bonuses[rand(0, bonuses.length - 1)];
 								var bonus = new createjs.Bitmap('img/' + imgs.bonus[randBonus]);
@@ -111,6 +122,7 @@ function init() {
                 					.to({y: colision.y + stage.canvas.height},
                 					 3000, createjs.Ease.getPowInOut(1));
 							}
+							this.killShip(this.enemies[j], j);
 						}
 
 						else if(this.enemies[j].damagesImg)
@@ -298,12 +310,14 @@ function init() {
 		},
 
 		moveEnemies: function(){
-			if(!this.state.moving)
+			//if(!this.state.moving)
 				for(var v of this.enemies)
 				{	
-					v.pattern(this);
+					if(!v.moving)
+						v.pattern(this);
 				}
 			
+
 			this.state.moving = true;
 		},
 
@@ -416,6 +430,10 @@ function init() {
 
 		if(ship.firing)
 				ship.shoot();
+
+			if(game.state.started)
+				game.addMeteor();	
+					
 
 		game.handleCollisions();
 		stage.update()

@@ -1,7 +1,6 @@
 class Enemy {
 
 	constructor(stat, pattern, canvas, shoot){
-		console.table(stat);
 		this.image = stat.image;
 		this.speed = stat.speed;
 		this.lives = stat.lives;
@@ -9,7 +8,8 @@ class Enemy {
 		this.points = stat.points;
 		this.isBoss = stat.isBoss;
 		this.damagesImg = stat.damagesImg;
-		this.boss = stat.boss
+		this.isBoss = stat.isBoss
+		this.dropBonus = stat.dropBonus
 		this.pattern = pattern;
 		this.moving = false;
 		this.added = false;

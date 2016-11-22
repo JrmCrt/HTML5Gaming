@@ -40,8 +40,15 @@ const imgs = {
 		}
 	},
 	rocks: {
-		small: 'spaceshooter/PNG/Meteors/meteorBrown_med1.png', 
-		big: 'spaceshooter/PNG/Meteors/meteorBrown_big3.png'
+		med: ['spaceshooter/PNG/Meteors/meteorBrown_med1.png',
+		'spaceshooter/PNG/Meteors/meteorBrown_med3.png'], 
+		big: ['spaceshooter/PNG/Meteors/meteorBrown_big3.png',
+		'spaceshooter/PNG/Meteors/meteorBrown_big1.png',
+		'spaceshooter/PNG/Meteors/meteorBrown_big2.png',
+		'spaceshooter/PNG/Meteors/meteorBrown_big4.png'],
+		small: ['spaceshooter/PNG/Meteors/meteorBrown_small1.png',
+		'spaceshooter/PNG/Meteors/meteorBrown_small2.png'],
+
 	},
 	enemies: {
 		0: 'spaceshooter/PNG/Enemies/enemyBlue1.png', 
@@ -78,7 +85,6 @@ const imgs = {
 
 const enemies = {
 	alien: {
-
 		stat:{
 			image: imgs.enemies.alien.regular,
 			speed: 5,
@@ -86,12 +92,14 @@ const enemies = {
 			fireImg: imgs.fire.enemy,
 			points: 100,
 			isBoss: false,
+			dropBonus: true,
 			damagesImg: imgs.enemies.alien.damages
 		},
 
 		pattern: function(game){
 			if(this.alive)
 			{
+				this.moving = true;
 				var distance = 100;
 				var possibleMoves = [{x: this.bitmap.x + 100, y: this.bitmap.y + 100}
 					,{x: this.bitmap.x + 100, y: this.bitmap.y - 100}
@@ -134,6 +142,30 @@ const enemies = {
 				createjs.Tween.get(fire)
                 	.to({y: this.bitmap.y + this.stage.canvas.height + this.bitmap.image.height}, 1500, createjs.Ease.getPowInOut(1));
 		}
+	},
+
+	meteor: {
+		stat:{
+			image: imgs.rocks.small[0],
+			speed: 5,
+			lives: 5,
+			fireImg: imgs.fire.enemy,
+			points: 0,
+			isBoss: false,
+			dropBonus: false,
+			damagesImg: {}
+		},
+
+		pattern: function(game){
+			if(this.alive)
+			{
+				this.moving = true;
+				createjs.Tween.get(this.bitmap)
+                	.to({y: this.bitmap.y + this.stage.canvas.height + this.bitmap.image.height}, 
+                		5000, createjs.Ease.getPowInOut(1));				
+			}
+
+		},
 	}
 };
 
