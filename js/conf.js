@@ -72,7 +72,8 @@ const imgs = {
 		shield: 'spaceshooter/PNG/Power-ups/shield_gold.png'
 	},
 	life: 'spaceshooter/PNG/UI/playerLife1_orange.png',
-	shield: 'spaceshooter/PNG/Effects/shield3.png'
+	shield: 'spaceshooter/PNG/Effects/shield3.png',
+	speed: 'spaceExtension/PNG/Sprites/Effects/spaceEffects_007.png'
 };
 
 const enemies = {

@@ -245,6 +245,20 @@ function init() {
 			else if(bonus == 'speed')
 			{
 				ship.speed *= 1.25;
+				ship.speedBitmap = new createjs.Bitmap('img/' + imgs.speed);
+				ship.speedBitmap.x = ship.bitmap.x + ship.bitmap.image.width / 2 - (ship.speedBitmap.image.width / 2);
+	            ship.speedBitmap.y = ship.bitmap.y + ship.bitmap.image.height;
+	            ship.speedBitmap.alpha = 0;
+	            stage.addChild(ship.speedBitmap);
+	            createjs.Tween.get(ship.speedBitmap)
+                	.to({alpha: 1}, 800, createjs.Ease.getPowInOut(1))
+                	.wait(250)
+                	.to({alpha: 0}, 1200, createjs.Ease.getPowInOut(1));
+	            setTimeout(function(){
+	                    stage.removeChild(ship.speedBitmap);
+	                    ship.speedBitmap = false;
+	            }, 2250);
+
 			}
 			else if(bonus == 'shield')
 			{
@@ -253,7 +267,6 @@ function init() {
 	                ship.shield.x = ship.bitmap.x - 22;
 	                ship.shield.y = ship.bitmap.y - 35;
 	                stage.addChild(ship.shield);
-	                stage.update();
 	                setTimeout(function(){
 	                    stage.removeChild(ship.shield);
 	                    ship.shield = false;
@@ -308,6 +321,8 @@ function init() {
 			    stage.removeChild(ship.bitmap);
 			    ship.shield = false;
 			    stage.removeChild(ship.shield);
+			    ship.speedBitmap = false;
+			    stage.removeChild(ship.speedBitmap);
 			    this.state.over = true;
 			}
 		}
@@ -317,6 +332,7 @@ function init() {
 	var ship = {
 		bitmap: false,
 		speed: 6,
+		speedBitmap: false,
 		shield: false, 
 		image: imgs.ship,
 		lives: 3,
@@ -358,19 +374,31 @@ function init() {
 				return false;
 			if(dir == 'left' && this.bitmap.x > 5){
 				this.bitmap.x -= this.speed;
-				this.shield.x -= this.speed;
+				if(this.shield)
+					this.shield.x -= this.speed;
+				if(this.speedBitmap)
+					this.speedBitmap.x -= this.speed;
 			}
 			else if(dir == 'right' && this.bitmap.x < (stage.canvas.width - this.bitmap.image.width) - 5){
 				this.bitmap.x += this.speed;
-				this.shield.x += this.speed;
+				if(this.shield)
+					this.shield.x += this.speed;
+				if(this.speedBitmap)
+					this.speedBitmap.x += this.speed;
 			}
 			else if(dir == 'up' && this.bitmap.y > 5){
 				this.bitmap.y -= this.speed;
-				this.shield.y -= this.speed;
+				if(this.shield)
+					this.shield.y -= this.speed;
+				if(this.speedBitmap)
+					this.speedBitmap.y -= this.speed;
 			}
 			else if(dir == 'down' && this.bitmap.y < (stage.canvas.height - this.bitmap.image.height) - 5){
 				this.bitmap.y += this.speed;
-				this.shield.y += this.speed;
+				if(this.shield)
+					this.shield.y += this.speed;
+				if(this.speedBitmap)
+					this.speedBitmap.y += this.speed;
 			}
 		}
 
