@@ -15,7 +15,8 @@ function init() {
 		text: {
 			score: false,
 			gameOver: false,
-			start: false
+			start: false,
+			level: false
 		},
 		livesBitmap: [],
 		state: {
@@ -58,11 +59,13 @@ function init() {
 				this.addScore();
 				this.handleLives();
 				//adding enemies...just for now
+				this.levelAnim();
 				for (var i = 0; i < 1; i++){
 					var temp = new Enemy(enemies.alien.stat, enemies.alien.pattern, 
 						stage, enemies.alien.shoot);
 					this.addEnemy(temp);
 				}
+				this.addMeteor();
 			}
 		},
 
@@ -74,9 +77,14 @@ function init() {
 			enemy.bitmap.x = rand(5, stage.canvas.width - enemy.bitmap.image.width); 
 			enemy.bitmap.y = - enemy.bitmap.image.height ;
 			enemy.added = false;
+			var dist = distance(enemy.bitmap.x, enemy.bitmap.y, EnemyX, EnemyY);
+			var speed = 141;
+			//console.log('distance ' + dist + 'speed ' + speed);
+			var time = (dist / speed)  * 1000;
+			//console.log('time ' + time);
 			this.enemies.push(enemy);
 			createjs.Tween.get(enemy.bitmap)
-                .to({x: EnemyX, y: EnemyY}, 1000, createjs.Ease.getPowInOut(1))
+                .to({x: EnemyX, y: EnemyY}, time, createjs.Ease.getPowInOut(1))
                 .call(function(){enemy.added = true;})
                 .call(function(){enemy.pattern(game);})
 		
@@ -84,7 +92,7 @@ function init() {
 
 		addMeteor: function(){
 			console.log('new enemies');
-			if(rand(0, 100) > 99){
+			if(rand(0, 100) > 75){
 				console.log('new meteor');
 				var meteor = new Enemy(enemies.meteor.stat, enemies.meteor.pattern,
 				stage, function(){});
@@ -93,6 +101,9 @@ function init() {
 					this.addEnemy(temp);
 				this.addEnemy(meteor, true);
 			}
+			setTimeout(function(){
+				game.addMeteor();
+			}, 1000);
 		},
 
 		handleCollisions: function(){
@@ -100,7 +111,7 @@ function init() {
 			for(var i = this.shots.length - 1; i >= 0; i--){
 				for(var j = this.enemies.length - 1; j >= 0; j--){
 					var colision = ndgmr.checkPixelCollision(this.shots[i], this.enemies[j].bitmap, 0);
-					if(colision)
+					if(colision && this.enemies[j].bitmap.y > - this.enemies[j].bitmap.image.height)
 					{
 						this.createImpact(colision);
 
@@ -109,7 +120,7 @@ function init() {
 						this.enemies[j].lives -= ship.firePower;
 
 						if(this.enemies[j].lives <= 0){
-							if(rand(0, 9) >= 0 && this.enemies[j].dropBonus){
+							if(rand(0, 10) > 5 && this.enemies[j].dropBonus){
 								var bonuses = Object.keys(imgs.bonus);
 								var randBonus = bonuses[rand(0, bonuses.length - 1)];
 								var bonus = new createjs.Bitmap('img/' + imgs.bonus[randBonus]);
@@ -191,7 +202,7 @@ function init() {
 			for(var i = this.bonuses.length - 1; i >= 0 && !this.state.over; i--)
 			{
 				var colisionBonus = ndgmr.checkPixelCollision(ship.bitmap, this.bonuses[i], 0);
-				if(colisionBonus)
+				if(colisionBonus && !game.state.over)
 				{
 					stage.removeChild(this.bonuses[i]);
 					this.handleBonus(this.bonuses[i].type);
@@ -309,16 +320,16 @@ function init() {
 			this.enemies.splice(index, 1);
 		},
 
-		moveEnemies: function(){
-			//if(!this.state.moving)
-				for(var v of this.enemies)
-				{	
-					if(!v.moving)
-						v.pattern(this);
-				}
-			
-
-			this.state.moving = true;
+		levelAnim: function(){
+			this.text.level = new createjs.Text("LEVEL " + String(this.level), "50px Future", "#FFFFFF");
+			this.text.level.x = this.text.start.x = stage.canvas.width/2 - this.text.level.getMeasuredWidth()/2;
+			this.text.level.y = stage.canvas.height/2 - this.text.level.getMeasuredHeight()/2;
+			this.text.level.alpha = 0;
+			stage.addChild(this.text.level);
+			createjs.Tween.get(this.text.level)
+                .to({alpha: 1}, 600, createjs.Ease.getPowInOut(1))
+               	.wait(800)
+               	.to({alpha: 0}, 600, createjs.Ease.getPowInOut(1));
 		},
 
 		gameOver: function(){
@@ -431,9 +442,8 @@ function init() {
 		if(ship.firing)
 				ship.shoot();
 
-			if(game.state.started)
-				game.addMeteor();	
-					
+		if(game.state.started)
+			//game.addMeteor();			
 
 		game.handleCollisions();
 		stage.update()
