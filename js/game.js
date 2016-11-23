@@ -93,12 +93,14 @@ function init() {
 		addMeteor: function(){
 			console.log('new enemies');
 			if(rand(0, 100) > 75){
-				console.log('new meteor');
-				var meteor = new Enemy(enemies.meteor.stat, enemies.meteor.pattern,
-				stage, function(){});
+				console.log('new enemy');
 				var temp = new Enemy(enemies.alien.stat, enemies.alien.pattern, 
-						stage, enemies.alien.shoot);
-					this.addEnemy(temp);
+					stage, enemies.alien.shoot);
+				this.addEnemy(temp);
+			}
+			if(rand(0, 100) > 75){
+				console.log('new meteor');
+				var meteor = new Enemy(enemies.meteor.stat, enemies.meteor.pattern, stage, function(){});
 				this.addEnemy(meteor, true);
 			}
 			setTimeout(function(){
@@ -111,7 +113,8 @@ function init() {
 			for(var i = this.shots.length - 1; i >= 0; i--){
 				for(var j = this.enemies.length - 1; j >= 0; j--){
 					var colision = ndgmr.checkPixelCollision(this.shots[i], this.enemies[j].bitmap, 0);
-					if(colision && this.enemies[j].bitmap.y > - this.enemies[j].bitmap.image.height)
+					if(colision && this.enemies[j].bitmap.y > - this.enemies[j].bitmap.image.height
+						&& this.shots[i].y > - this.shots[i].image.height)
 					{
 						this.createImpact(colision);
 
@@ -130,7 +133,7 @@ function init() {
 								this.bonuses.push(bonus);
 								stage.addChild(bonus);
 								createjs.Tween.get(bonus)
-                					.to({y: colision.y + stage.canvas.height},
+                					.to({y: colision.y + stage.canvas.height + this.enemies[j].bitmap.image.height},
                 					 3000, createjs.Ease.getPowInOut(1));
 							}
 							this.killShip(this.enemies[j], j);

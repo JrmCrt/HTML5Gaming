@@ -161,8 +161,13 @@ const enemies = {
 			{
 				this.moving = true;
 				createjs.Tween.get(this.bitmap)
-                	.to({y: this.bitmap.y + this.stage.canvas.height + this.bitmap.image.height}, 
-                		5000, createjs.Ease.getPowInOut(1));				
+                	.to({y: this.bitmap.y + this.stage.canvas.height + this.bitmap.image.height * 2}, 
+                		5000, createjs.Ease.getPowInOut(1));	
+
+                // createjs.Tween.get(this.bitmap, {loop:true})
+                // 	.to({rotation: 360}, 
+                // 		5000, createjs.Ease.getPowInOut(1));
+
 			}
 
 		},
