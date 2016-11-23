@@ -93,6 +93,7 @@ const enemies = {
 			points: 100,
 			isBoss: false,
 			dropBonus: true,
+			isMeteor: false,
 			damagesImg: imgs.enemies.alien.damages
 		},
 
@@ -136,7 +137,7 @@ const enemies = {
 			var fire = new createjs.Bitmap('img/' + imgs.fire.enemy[1]);
 				this.stage.addChild(fire);
 				fire.rotation = 180;
-				fire.y = this.bitmap.y + 35;
+				fire.y = this.bitmap.y + this.bitmap.image.height;
 				fire.x = this.bitmap.x + this.bitmap.image.width / 2 - (fire.image.width / 2);
 				game.enemiesShots.push(fire);
 				createjs.Tween.get(fire)
@@ -153,6 +154,7 @@ const enemies = {
 			points: 0,
 			isBoss: false,
 			dropBonus: false,
+			isMeteor: true,
 			damagesImg: {}
 		},
 
@@ -163,16 +165,32 @@ const enemies = {
 				createjs.Tween.get(this.bitmap)
                 	.to({y: this.bitmap.y + this.stage.canvas.height + this.bitmap.image.height * 2}, 
                 		5000, createjs.Ease.getPowInOut(1));	
-
-                // createjs.Tween.get(this.bitmap, {loop:true})
-                // 	.to({rotation: 360}, 
-                // 		5000, createjs.Ease.getPowInOut(1));
-
 			}
 
 		},
+
+		shoot: function(){
+
+		}
 	}
 };
+
+
+var levels = {
+	1: {
+		enemies : Object.keys(Array.apply(0,Array(20))),
+		boss: ''
+	},
+	2: {
+		enemies : [],
+		boss: ''
+	}
+};
+
+levels[1].enemies.fill(enemies.alien, 0, 20);
+//var meteors = Object.keys(Array.apply(0,Array(10))).fill(enemies.meteor, 0, 10)
+// levels[1].enemies = levels[1].enemies.concat(meteors);
+//console.log(levels[1].enemies);
 
 function rand(min, max){
 	return Math.floor(Math.random() * (max - min + 1)) + min;

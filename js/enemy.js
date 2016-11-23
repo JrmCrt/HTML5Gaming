@@ -8,8 +8,9 @@ class Enemy {
 		this.points = stat.points;
 		this.isBoss = stat.isBoss;
 		this.damagesImg = stat.damagesImg;
-		this.isBoss = stat.isBoss
-		this.dropBonus = stat.dropBonus
+		this.isBoss = stat.isBoss;
+		this.dropBonus = stat.dropBonus;
+		this.isMeteor = stat.isMeteor;
 		this.pattern = pattern;
 		this.moving = false;
 		this.added = false;
