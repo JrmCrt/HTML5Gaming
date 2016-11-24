@@ -3,7 +3,7 @@ function init() {
 	var stage = new createjs.Stage("canvas");
 
 	var game = {
-		level: 2,
+		level: 1,
 		shots: [],
 		enemiesShots: [],
 		kills: 0,
@@ -347,7 +347,7 @@ function init() {
 
 		killShip: function(enemy, index){
 			stage.removeChild(enemy.bitmap);
-			if(!enemy.isMeteor)
+			if(!enemy.isMeteor && !enemy.isBoss)
 				this.kills++;
 			this.score.points += enemy.points;
 			this.addScore(enemy.points);
