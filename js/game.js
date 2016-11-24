@@ -3,7 +3,7 @@ function init() {
 	var stage = new createjs.Stage("canvas");
 
 	var game = {
-		level: 2,
+		level: 1,
 		shots: [],
 		enemiesShots: [],
 		kills: 0,
@@ -423,7 +423,7 @@ function init() {
 		speedBitmap: false,
 		shield: false, 
 		image: imgs.ship,
-		lives: 3,
+		lives: 5,
 		invicible : false,
 		canFire: true,
 		firing: false,

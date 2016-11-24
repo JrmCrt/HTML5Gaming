@@ -111,7 +111,7 @@ const enemies = {
 				];
 
 				var maxX = this.stage.canvas.width - this.bitmap.image.width;
-				var maxY = this.stage.canvas.height - this.bitmap.image.height;
+				var maxY = this.stage.canvas.height - this.bitmap.image.height ;
 
 				for(var i = possibleMoves.length - 1; i >= 0; i--)
 					if(possibleMoves[i].x < 0 || possibleMoves[i].x > maxX)
@@ -172,7 +172,7 @@ const enemies = {
 				];
 
 				var maxX = this.stage.canvas.width - this.bitmap.image.width;
-				var maxY = this.stage.canvas.height - this.bitmap.image.height - 100;
+				var maxY = this.stage.canvas.height - this.bitmap.image.height - 250;
 
 				for(var i = possibleMoves.length - 1; i >= 0; i--)
 					if(possibleMoves[i].x < 0 || possibleMoves[i].x > maxX)
@@ -242,7 +242,7 @@ const enemies = {
 				];
 
 				var maxX = this.stage.canvas.width - this.bitmap.image.width;
-				var maxY = this.stage.canvas.height - this.bitmap.image.height - 200;
+				var maxY = this.stage.canvas.height - this.bitmap.image.height - 250;
 
 				for(var i = possibleMoves.length - 1; i >= 0; i--)
 					if(possibleMoves[i].x < 0 || possibleMoves[i].x > maxX)
@@ -291,7 +291,7 @@ const enemies = {
 		stat:{
 			image: imgs.enemies[2],
 			speed: 5,
-			lives: 1,
+			lives: 8,
 			fireImg: imgs.fire.enemy,
 			points: 200,
 			isBoss: false,
@@ -312,7 +312,7 @@ const enemies = {
 				];
 
 				var maxX = this.stage.canvas.width - this.bitmap.image.width;
-				var maxY = this.stage.canvas.height - this.bitmap.image.height;
+				var maxY = this.stage.canvas.height - this.bitmap.image.height - 200;
 
 				for(var i = possibleMoves.length - 1; i >= 0; i--)
 					if(possibleMoves[i].x < 0 || possibleMoves[i].x > maxX)
