@@ -3,7 +3,7 @@ function init() {
 	var stage = new createjs.Stage("canvas");
 
 	var game = {
-		level: 1,
+		level: 2,
 		shots: [],
 		enemiesShots: [],
 		kills: 0,
@@ -121,7 +121,7 @@ function init() {
 				this.addMeteor();
 			}
 			else
-				this.gameOver();
+				this.gameOver(true);
 		},
 
 		handleCollisions: function(){
@@ -367,10 +367,11 @@ function init() {
                	.to({alpha: 0}, 600, createjs.Ease.getPowInOut(1));
 		},
 
-		gameOver: function(){
+		gameOver: function(win = false){
 			if(!this.text.gameOver)
 			{
 				this.text.gameOver = new createjs.Text('GAME OVER', "70px future", "#FFFFFF");
+				if(win) this.text.gameOver.text = 'YOU WIN';
 				this.text.gameOver.x = stage.canvas.width / 2 - this.text.gameOver.getMeasuredWidth() / 2;
 				this.text.gameOver.y =  250;
 				stage.addChild(this.text.gameOver);
@@ -379,6 +380,19 @@ function init() {
 				this.text.score.x = stage.canvas.width / 2 - this.text.score.getMeasuredWidth() / 2;
 			    this.text.score.y =  350;
 			    stage.addChild(this.text.score);
+
+			    stage.enableMouseOver(10);
+				var replay = new createjs.Text("REPLAY", "40px Future", "#FFFFFF");
+		    	replay.x = stage.canvas.width/2 - replay.getMeasuredWidth()/2;
+		    	replay.y = stage.canvas.height - 250;
+		    	var hit = new createjs.Shape();
+				hit.graphics.beginFill("#000").drawRect(0, 0, replay.getMeasuredWidth(), replay.getMeasuredHeight());
+				replay.hitArea = hit;
+				replay.alpha = 0.7;
+				replay.on("mouseover", function(event) { replay.alpha = 1; });
+				replay.on("mouseout", function(event) { replay.alpha = 0.7; });
+				replay.addEventListener("click", function(event) { location.reload(); })
+		    	stage.addChild(replay);
 
 			    stage.removeChild(this.score.bitmap);
 			    stage.removeChild(ship.bitmap);
@@ -481,7 +495,6 @@ function init() {
 
 		if(levels[game.level].enemies.length === 0){
 			if(game.kills == game.toKill && !game.state.boss){
-				console.log('level over');
 				game.state.boss = true;
 				var temp = new Enemy(levels[game.level].boss.stat, levels[game.level].boss.pattern, 
 					stage, levels[game.level].boss.shoot);

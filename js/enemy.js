@@ -11,6 +11,7 @@ class Enemy {
 		this.isBoss = stat.isBoss;
 		this.dropBonus = stat.dropBonus;
 		this.isMeteor = stat.isMeteor;
+		this.toRotate = stat.toRotate !== undefined ? stat.toRotate : false;
 		this.pattern = pattern;
 		this.moving = false;
 		this.added = false;
