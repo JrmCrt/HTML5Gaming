@@ -87,7 +87,7 @@ function init() {
 		},
 
 		addMeteor: function(){
-			if(this.state.over)
+			if(this.state.over || this.state.boss)
 				return false;
 
 			if(rand(0, 100) > 50){
@@ -103,10 +103,25 @@ function init() {
 					stage, function(){});
 				this.addEnemy(temp, true);
 			}
+			if(!this.state.boss){
+				setTimeout(function(){
+					game.addMeteor();
+				}, 1000);
+			}
+		},
 
-			setTimeout(function(){
-				game.addMeteor();
-			}, 1000);
+		nextLevel: function(){
+			if(this.level + 1 <= Object.keys(levels).length){
+				this.level++;
+				this.levelAnim();
+				this.state.boss = false;
+				this.toKill = levels[this.level].enemies.length;
+				this.kills = 0;
+				//this.shots = this.enemies = this.enemiesShots = this.bonuses = [];
+				this.addMeteor();
+			}
+			else
+				this.gameOver();
 		},
 
 		handleCollisions: function(){
@@ -124,7 +139,7 @@ function init() {
 						this.enemies[j].lives -= ship.firePower;
 
 						if(this.enemies[j].lives <= 0){
-							if(rand(0, 10) > 5 && this.enemies[j].dropBonus){
+							if(rand(0, 10) > 7 && this.enemies[j].dropBonus){
 								var bonuses = Object.keys(imgs.bonus);
 								var randBonus = bonuses[rand(0, bonuses.length - 1)];
 								var bonus = new createjs.Bitmap('img/' + imgs.bonus[randBonus]);
@@ -136,6 +151,9 @@ function init() {
 								createjs.Tween.get(bonus)
                 					.to({y: colision.y + stage.canvas.height + this.enemies[j].bitmap.image.height},
                 					 3000, createjs.Ease.getPowInOut(1));
+							}
+							if(this.enemies[j].isBoss){
+								this.nextLevel();
 							}
 							this.killShip(this.enemies[j], j);
 						}
@@ -260,7 +278,7 @@ function init() {
 				ship.lives++;
 				this.handleLives();	
 			}
-			else if(bonus == 'shoot')
+			else if(bonus == 'shoot' && ship.firePower < 4)
 				ship.firePower++;
 			else if(bonus == 'points')
 			{
@@ -462,8 +480,13 @@ function init() {
 		game.handleCollisions();
 
 		if(levels[game.level].enemies.length === 0){
-			if(game.kills == game.toKill)
+			if(game.kills == game.toKill && !game.state.boss){
 				console.log('level over');
+				game.state.boss = true;
+				var temp = new Enemy(levels[game.level].boss.stat, levels[game.level].boss.pattern, 
+					stage, levels[game.level].boss.shoot);
+				game.addEnemy(temp, levels[game.level].boss.stat.isMeteor);
+			}
 		}
 
 		stage.update()
