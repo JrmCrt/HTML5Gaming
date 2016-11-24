@@ -291,7 +291,7 @@ const enemies = {
 		stat:{
 			image: imgs.enemies[2],
 			speed: 5,
-			lives: 8,
+			lives: 1,
 			fireImg: imgs.fire.enemy,
 			points: 200,
 			isBoss: false,

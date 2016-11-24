@@ -3,7 +3,7 @@ function init() {
 	var stage = new createjs.Stage("canvas");
 
 	var game = {
-		level: 1,
+		level: 2,
 		shots: [],
 		enemiesShots: [],
 		kills: 0,
@@ -117,7 +117,6 @@ function init() {
 				this.state.boss = false;
 				this.toKill = levels[this.level].enemies.length;
 				this.kills = 0;
-				//this.shots = this.enemies = this.enemiesShots = this.bonuses = [];
 				this.addMeteor();
 			}
 			else
@@ -139,7 +138,7 @@ function init() {
 						this.enemies[j].lives -= ship.firePower;
 
 						if(this.enemies[j].lives <= 0){
-							if(rand(0, 10) > 7 && this.enemies[j].dropBonus){
+							if(rand(0, 10) > 8 && this.enemies[j].dropBonus){
 								var bonuses = Object.keys(imgs.bonus);
 								var randBonus = bonuses[rand(0, bonuses.length - 1)];
 								var bonus = new createjs.Bitmap('img/' + imgs.bonus[randBonus]);
@@ -282,8 +281,8 @@ function init() {
 				ship.firePower++;
 			else if(bonus == 'points')
 			{
-				this.score.points += 1000;
-				this.addScore(1000);
+				this.score.points += 500;
+				this.addScore(500);
 			}
 			else if(bonus == 'speed')
 			{
@@ -371,10 +370,22 @@ function init() {
 			if(!this.text.gameOver)
 			{
 				this.text.gameOver = new createjs.Text('GAME OVER', "70px future", "#FFFFFF");
-				if(win) this.text.gameOver.text = 'YOU WIN';
+				if(win) {
+					this.text.gameOver.text = 'YOU WIN';
+					var lifescore = new createjs.Text('+ ' + String(this.livesBitmap.length * 1000), "40px future", "#FFFFFF");
+					stage.addChild(lifescore);
+					lifescore.x = stage.canvas.width / 2 - lifescore.getMeasuredWidth() / 2;
+					lifescore.y = stage.canvas.height - 280;
+					createjs.Tween.get(lifescore)
+                	.wait(2000)
+                	.to({alpha: 0}, 500, createjs.Ease.getPowInOut(1));
+					this.score.points += this.livesBitmap.length * 1000;
+					this.addScore(this.livesBitmap.length * 1000);
+				}
 				this.text.gameOver.x = stage.canvas.width / 2 - this.text.gameOver.getMeasuredWidth() / 2;
 				this.text.gameOver.y =  250;
 				stage.addChild(this.text.gameOver);
+
 
 				this.text.score = new createjs.Text(this.score.bitmap.text + " POINTS", "55px future", "#FFFFFF");			    
 				this.text.score.x = stage.canvas.width / 2 - this.text.score.getMeasuredWidth() / 2;
@@ -384,7 +395,7 @@ function init() {
 			    stage.enableMouseOver(10);
 				var replay = new createjs.Text("REPLAY", "40px Future", "#FFFFFF");
 		    	replay.x = stage.canvas.width/2 - replay.getMeasuredWidth()/2;
-		    	replay.y = stage.canvas.height - 250;
+		    	replay.y = stage.canvas.height - 200;
 		    	var hit = new createjs.Shape();
 				hit.graphics.beginFill("#000").drawRect(0, 0, replay.getMeasuredWidth(), replay.getMeasuredHeight());
 				replay.hitArea = hit;
