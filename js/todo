@@ -1,3 +1,18 @@
 fixe kill after death > fixed
-bonus gestion
-animation bonus speed?
+bonus gestion > done
+animation bonus speed? > done
+shoot bonus overpowered?
+
+moveEnemies: function(){
+			//if(!this.state.moving)
+				for(var v of this.enemies)
+				{	
+					if(!v.moving)
+						v.pattern(this);
+				}
+			
+
+			this.state.moving = true;
+		},
+
+

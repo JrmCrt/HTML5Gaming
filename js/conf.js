@@ -6,7 +6,7 @@ const keys = {
 		down: 40 
 	},
 	fire: [32, 17],
-	escape: 27,
+	pause: [27, 80],
 	enter: 13
 };
 

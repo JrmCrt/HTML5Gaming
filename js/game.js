@@ -18,7 +18,8 @@ function init() {
 			score: false,
 			gameOver: false,
 			start: false,
-			level: false
+			level: false,
+			pause: false
 		},
 		livesBitmap: [],
 		state: {
@@ -37,6 +38,7 @@ function init() {
 		    var hit = new createjs.Shape();
 			hit.graphics.beginFill("#000").drawRect(0, 0, this.text.start.getMeasuredWidth(), this.text.start.getMeasuredHeight());
 			this.text.start.hitArea = hit;
+			this.text.start.cursor = 'Pointer';
 			this.text.start.alpha = 0.7;
 			this.text.start.on("mouseover", function(event) { game.text.start.alpha = 1; });
 			this.text.start.on("mouseout", function(event) { game.text.start.alpha = 0.7; });
@@ -371,7 +373,7 @@ function init() {
 			{
 				this.text.gameOver = new createjs.Text('GAME OVER', "70px future", "#FFFFFF");
 				if(win) {
-					this.text.gameOver.text = 'YOU WIN';
+					this.text.gameOver.text = 'YOU WIN !';
 					var lifescore = new createjs.Text('+ ' + String(this.livesBitmap.length * 1000), "40px future", "#FFFFFF");
 					stage.addChild(lifescore);
 					lifescore.x = stage.canvas.width / 2 - lifescore.getMeasuredWidth() / 2;
@@ -396,6 +398,7 @@ function init() {
 				var replay = new createjs.Text("REPLAY", "40px Future", "#FFFFFF");
 		    	replay.x = stage.canvas.width/2 - replay.getMeasuredWidth()/2;
 		    	replay.y = stage.canvas.height - 200;
+		    	replay.cursor = 'Pointer';
 		    	var hit = new createjs.Shape();
 				hit.graphics.beginFill("#000").drawRect(0, 0, replay.getMeasuredWidth(), replay.getMeasuredHeight());
 				replay.hitArea = hit;
@@ -524,6 +527,29 @@ function init() {
 
 		if(keys.fire.includes(key))
 			ship.firing = true;
+
+		if(keys.pause.includes(key))
+		{
+			if(!game.state.pause)
+			{
+				console.log('pause');
+				game.state.pause = true;
+				createjs.Ticker.setPaused(paused = true);
+                game.text.pause = new createjs.Text('PAUSE', '75px Future', '#FFFFFF');
+                game.text.pause.x = 340;
+                game.text.pause.y = 300;
+                stage.addChild(game.text.pause);
+                stage.alpha = 0.5;
+			}
+			else
+			{
+				console.log('restart');
+				createjs.Ticker.setPaused(paused = false);
+                stage.removeChild(game.text.pause);
+                stage.alpha = 1;
+				game.state.pause = false;
+			}
+		}
 	}
 
 	function handleKeyUp(e){
