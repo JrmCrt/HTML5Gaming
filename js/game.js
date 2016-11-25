@@ -384,6 +384,7 @@ function init() {
                 	.wait(2000)
                 	.to({alpha: 0}, 500, createjs.Ease.getPowInOut(1));
 					this.score.points += this.livesBitmap.length * 1000;
+					this.score.bitmap.text = String(this.score.points);
 				}
 				this.text.gameOver.x = stage.canvas.width / 2 - this.text.gameOver.getMeasuredWidth() / 2;
 				this.text.gameOver.y =  250;

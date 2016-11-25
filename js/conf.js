@@ -425,7 +425,7 @@ const enemies = {
 			speed: 5,
 			lives: 10,
 			fireImg: imgs.fire.enemy.missile,
-			points: 300,
+			points: 3000,
 			isBoss: false,
 			dropBonus: true,
 			isMeteor: false,
