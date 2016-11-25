@@ -33,7 +33,9 @@ const imgs = {
 		enemy: {
 			1: 'spaceshooter/PNG/Lasers/laserRed07.png',
 			2: 'spaceshooter/PNG/Lasers/laserRed06.png',
-			missile: 'spaceExtension/PNG/Sprites/Missiles/spaceMissiles_003.png'
+			missile: 'spaceExtension/PNG/Sprites/Missiles/spaceMissiles_003.png',
+			missile2: 'spaceExtension/PNG/Sprites/Missiles/spaceMissiles_021.png',
+			laser : 'alien-pack/PNG/laserGreen1.png'
 		},	 
 		hit: {
 			blue: 'spaceshooter/PNG/Lasers/laserBlue10.png', 
@@ -56,7 +58,7 @@ const imgs = {
 		0: 'spaceshooter/PNG/Enemies/enemyBlack1.png', 
 		1: 'spaceshooter/PNG/Enemies/enemyBlack2.png', 
 		2: 'spaceshooter/PNG/Enemies/enemyBlack3.png', 
-		3: 'spaceshooter/PNG/Enemies/enemyBlack4.png', 
+		3: 'spaceExtension/PNG/Sprites/Ships/spaceShips_003.png', 
 		4: 'spaceshooter/PNG/Enemies/enemyBlack5.png',
 		alien: {
 			regular: 'alien-pack/PNG/shipBlue.png',
@@ -69,7 +71,7 @@ const imgs = {
 	bosses: {
 		0: 'spaceExtension/PNG/Sprites/Ships/spaceShips_008.png', 
 		1: 'spaceExtension/PNG/Sprites/Rockets/spaceRockets_003_rotated.png', 
-		2: 'spaceshooter/PNG/Enemies/enemyBlack3.png', 
+		2: 'alien-pack/PNG/shipGreen_manned.png', 
 		3: 'spaceshooter/PNG/Enemies/enemyBlack2.png', 
 		4: 'spaceshooter/PNG/Enemies/enemyBlack1.png'
 	}, 
@@ -287,6 +289,66 @@ const enemies = {
 		}
 	},
 
+	boss3: {
+		stat:{
+			image: imgs.bosses[2],
+			speed: 5,
+			lives: 50,
+			fireImg: imgs.fire.enemy.missile2,
+			points: 2000,
+			isBoss: true,
+			dropBonus: false,
+			isMeteor: false,
+			damagesImg: {}
+		},
+
+		pattern: function(game){
+			if(this.alive)
+			{
+				this.moving = true;
+				var distance = 100;
+				var possibleMoves = [{x: this.bitmap.x + 200, y: this.bitmap.y}
+					,{x: this.bitmap.x, y: this.bitmap.y - 200}
+					,{x: this.bitmap.x, y: this.bitmap.y + 200}
+					,{x: this.bitmap.x - 200, y: this.bitmap.y}
+				];
+
+				var maxX = this.stage.canvas.width - this.bitmap.image.width;
+				var maxY = this.stage.canvas.height - this.bitmap.image.height - 250;
+
+				for(var i = possibleMoves.length - 1; i >= 0; i--)
+					if(possibleMoves[i].x < 0 || possibleMoves[i].x > maxX)
+							possibleMoves.splice(i, 1);
+					else if(possibleMoves[i].y < 0 || possibleMoves[i].y > maxY)
+							possibleMoves.splice(i, 1);
+
+				var move = rand(0, possibleMoves.length - 1);
+
+				createjs.Tween.get(this.bitmap)
+                	.to({x: possibleMoves[move].x, y: possibleMoves[move].y}, 1000, createjs.Ease.getPowInOut(1))
+        			.call(this.pattern, [game], this)
+        			.call(this.shoot, [game], this);
+			}
+
+		},
+
+		shoot: function(game){
+			if(!this.alive) 
+				return false;
+
+			var fire = new createjs.Bitmap('img/' + this.fireImg);
+				this.stage.addChild(fire);
+				fire.rotation = 180;
+				fire.y = this.bitmap.y + this.bitmap.image.height + 50;
+				fire.x = this.bitmap.x + this.bitmap.image.width / 2 - (fire.image.width / 2);
+				game.enemiesShots.push(fire);
+				createjs.Tween.get(fire)
+                	.to({y: this.bitmap.y + this.stage.canvas.height + this.bitmap.image.height}, 1000, createjs.Ease.getPowInOut(1));
+			
+  
+		}
+	},
+
 	enemy2: {
 		stat:{
 			image: imgs.enemies[2],
@@ -357,6 +419,67 @@ const enemies = {
 		}
 	},
 
+	enemy3: {
+		stat:{
+			image: imgs.enemies[3],
+			speed: 5,
+			lives: 10,
+			fireImg: imgs.fire.enemy.missile,
+			points: 300,
+			isBoss: false,
+			dropBonus: true,
+			isMeteor: false,
+			damagesImg: {}
+		},
+
+		pattern: function(game){
+			if(this.alive)
+			{
+				this.moving = true;
+				var distance = 100;
+				var possibleMoves = [{x: this.bitmap.x + 100, y: this.bitmap.y}
+					,{x: this.bitmap.x, y: this.bitmap.y - 100}
+					,{x: this.bitmap.x, y: this.bitmap.y + 100}
+					,{x: this.bitmap.x - 100, y: this.bitmap.y}
+				];
+
+				var maxX = this.stage.canvas.width - this.bitmap.image.width;
+				var maxY = this.stage.canvas.height - this.bitmap.image.height - 200;
+
+				for(var i = possibleMoves.length - 1; i >= 0; i--)
+					if(possibleMoves[i].x < 0 || possibleMoves[i].x > maxX)
+							possibleMoves.splice(i, 1);
+					else if(possibleMoves[i].y < 0 || possibleMoves[i].y > maxY)
+							possibleMoves.splice(i, 1);
+
+				var move = rand(0, possibleMoves.length - 1);
+
+				createjs.Tween.get(this.bitmap)
+                	.to({x: possibleMoves[move].x, y: possibleMoves[move].y}, 1000, createjs.Ease.getPowInOut(1))
+        			.call(this.pattern, [game], this)
+        			.call(this.shoot, [game], this);
+			}
+
+		},
+
+		shoot: function(game){
+			if(!this.alive) 
+				return false;
+
+			if(rand(0, 9) < 5)
+				return false;
+
+			var fire = new createjs.Bitmap('img/' + this.fireImg);
+				this.stage.addChild(fire);
+				fire.rotation = 180;
+				fire.y = this.bitmap.y + this.bitmap.image.height;
+				fire.x = this.bitmap.x + this.bitmap.image.width / 2 - (fire.image.width / 2);
+				game.enemiesShots.push(fire);
+				createjs.Tween.get(fire)
+                	.to({y: this.bitmap.y + this.stage.canvas.height + this.bitmap.image.height}, 1500, createjs.Ease.getPowInOut(1));
+		}
+	},
+
 	meteor: {
 		stat:{
 			image: imgs.rocks.small[0],
@@ -396,13 +519,21 @@ var levels = {
 	2: {
 		enemies : Object.keys(Array.apply(0,Array(10))),
 		boss: enemies.boss2
+	},
+	3: {
+		enemies : Object.keys(Array.apply(0,Array(10))),
+		boss: enemies.boss3
 	}
+
 };
 
 levels[1].enemies.fill(enemies.alien, 0, 10);
 levels[2].enemies.fill(enemies.alien, 0, 10);
 var en2 = Object.keys(Array.apply(0,Array(10))).fill(enemies.enemy2, 0, 10);
 levels[2].enemies = levels[2].enemies.concat(en2);
+levels[3].enemies = levels[2].enemies;
+var en3 = Object.keys(Array.apply(0,Array(10))).fill(enemies.enemy3, 0, 10);
+levels[3].enemies = levels[3].enemies.concat(en3);
 
 function rand(min, max){
 	return Math.floor(Math.random() * (max - min + 1)) + min;
