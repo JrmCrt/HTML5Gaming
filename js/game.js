@@ -442,7 +442,7 @@ function init() {
 		}, 
 
 		shoot: function(){
-			if(!game.state.started)
+			if(!game.state.started || game.state.pause)
 				return false;
 			if(this.canFire && !game.state.over)
 			{	
@@ -462,7 +462,7 @@ function init() {
 		},
 
 		move: function(dir){
-			if(!game.state.started || game.state.over)
+			if(!game.state.started || game.state.over || game.state.pause)
 				return false;
 			if(dir == 'left' && this.bitmap.x > 5){
 				this.bitmap.x -= this.speed;
