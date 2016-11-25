@@ -530,7 +530,7 @@ function init() {
 		if(keys.fire.includes(key))
 			ship.firing = true;
 
-		if(keys.pause.includes(key))
+		if(keys.pause.includes(key) && game.state.started)
 		{
 			if(!game.state.pause)
 			{
