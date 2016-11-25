@@ -103,6 +103,8 @@ function init() {
 			if(rand(0, 100) > 75 && !this.state.pause){
 				var temp = new Enemy(enemies.meteor.stat, enemies.meteor.pattern, 
 					stage, function(){});
+				if(this.level > 1) 
+					temp.image = imgs.rocks.med[rand(0, 1)];
 				this.addEnemy(temp, true);
 			}
 			if(!this.state.boss){
@@ -382,7 +384,6 @@ function init() {
                 	.wait(2000)
                 	.to({alpha: 0}, 500, createjs.Ease.getPowInOut(1));
 					this.score.points += this.livesBitmap.length * 1000;
-					this.addScore(this.livesBitmap.length * 1000);
 				}
 				this.text.gameOver.x = stage.canvas.width / 2 - this.text.gameOver.getMeasuredWidth() / 2;
 				this.text.gameOver.y =  250;
