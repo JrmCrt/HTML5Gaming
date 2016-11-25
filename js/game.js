@@ -92,7 +92,7 @@ function init() {
 			if(this.state.over || this.state.boss)
 				return false;
 
-			if(rand(0, 100) > 50){
+			if(rand(0, 100) > 50 && !this.state.pause){
 				var index = rand(0, levels[this.level].enemies.length - 1);
 				var temp = new Enemy(levels[this.level].enemies[index].stat, levels[this.level].enemies[index].pattern, 
 					stage, levels[this.level].enemies[index].shoot);
@@ -100,7 +100,7 @@ function init() {
 				levels[this.level].enemies.splice(index, 1);
 			}
 			
-			if(rand(0, 100) > 75){
+			if(rand(0, 100) > 75 && !this.state.pause){
 				var temp = new Enemy(enemies.meteor.stat, enemies.meteor.pattern, 
 					stage, function(){});
 				this.addEnemy(temp, true);
@@ -532,7 +532,6 @@ function init() {
 		{
 			if(!game.state.pause)
 			{
-				console.log('pause');
 				game.state.pause = true;
 				createjs.Ticker.setPaused(paused = true);
                 game.text.pause = new createjs.Text('PAUSE', '75px Future', '#FFFFFF');
@@ -543,7 +542,6 @@ function init() {
 			}
 			else
 			{
-				console.log('restart');
 				createjs.Ticker.setPaused(paused = false);
                 stage.removeChild(game.text.pause);
                 stage.alpha = 1;
