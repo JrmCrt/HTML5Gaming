@@ -432,7 +432,7 @@ function init() {
 		invicible : false,
 		canFire: true,
 		firing: false,
-		firePower: 4, 
+		firePower: 1, 
 		direction: {left: false, right: false, up: false, down: false},
 
 		append: function(){
