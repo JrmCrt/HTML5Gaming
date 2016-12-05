@@ -161,8 +161,8 @@ function init() {
 							this.killShip(this.enemies[j], j);
 						}
 						else if(this.enemies[j].damagesImg)
-							if(this.enemies[j].damagesImg[this.enemies[j].lives] !== undefined)
-								this.enemies[j].bitmap.image.src = 'img/' + this.enemies[j].damagesImg[this.enemies[j].lives];
+							if(this.enemies[j].damagesImg[Math.floor(this.enemies[j].lives)] !== undefined)
+								this.enemies[j].bitmap.image.src = 'img/' + this.enemies[j].damagesImg[Math.floor(this.enemies[j].lives)];
 					}
 				}	
 			}
@@ -282,7 +282,7 @@ function init() {
 				this.handleLives();	
 			}
 			else if(bonus == 'shoot' && ship.firePower < 4)
-				ship.firePower++;
+				ship.firePower += 0.5;
 			else if(bonus == 'points')
 			{
 				this.score.points += 500;
