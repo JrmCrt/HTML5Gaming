@@ -514,15 +514,18 @@ const enemies = {
 var levels = {
 	1: {
 		enemies : Object.keys(Array.apply(0,Array(10))),
-		boss: enemies.boss1
+		boss: enemies.boss1,
+		maxEnemies: 5
 	},
 	2: {
 		enemies : Object.keys(Array.apply(0,Array(10))),
-		boss: enemies.boss2
+		boss: enemies.boss2,
+		maxEnemies: 7
 	},
 	3: {
 		enemies : Object.keys(Array.apply(0,Array(10))),
-		boss: enemies.boss3
+		boss: enemies.boss3,
+		maxEnemies: 9
 	}
 
 };

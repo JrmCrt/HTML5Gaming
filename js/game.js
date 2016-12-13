@@ -107,6 +107,7 @@ function init() {
 					temp.image = imgs.rocks.med[rand(0, 1)];
 				this.addEnemy(temp, true);
 			}
+			
 			if(!this.state.boss){
 				setTimeout(function(){
 					game.addMeteor();
@@ -447,7 +448,7 @@ function init() {
 				return false;
 			if(this.canFire && !game.state.over)
 			{	
-				var fire = new createjs.Bitmap('img/' + imgs.fire[this.firePower]);
+				var fire = new createjs.Bitmap('img/' + imgs.fire[Math.ceil(this.firePower)]);
 				stage.addChild(fire);
 				fire.y = this.bitmap.y - 35;
 				fire.x = this.bitmap.x + this.bitmap.image.width / 2 - (fire.image.width / 2);
