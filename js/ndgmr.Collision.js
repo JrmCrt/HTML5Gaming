@@ -170,7 +170,8 @@ this.ndgmr = this.ndgmr || {};
     } else {
       ctx.drawImage(image,0,0,image.width,image.height);
     }
-    return ctx.getImageData(0, 0, intersetion.width, intersetion.height).data;
+    return ctx.getImageData(0, 0, Math.max(1, intersetion.width),
+      Math.max(1, intersetion.height)).data;
   }
 
   var _compareAlphaValues = function(imageData1,imageData2,width,height,alphaThreshold,getRect) {
